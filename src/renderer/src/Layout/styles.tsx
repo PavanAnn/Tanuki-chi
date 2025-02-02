@@ -11,4 +11,5 @@ export const MainContent = styled.main`
   padding: 20px;
   background-color: #2E1760;
   overflow-y: auto;
+  margin-top: 6vh;
 `

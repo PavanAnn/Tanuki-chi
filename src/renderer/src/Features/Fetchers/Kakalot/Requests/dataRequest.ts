@@ -4,7 +4,7 @@ import axios from "axios"
 function getMangasKakalot() {
     return async (page) => {
         const response = await axios.get(
-            `https://mangakakalot.com/manga_list?type=new&category=all&alpha=all&state=all&group=all&page=${page}`
+            `http://localhost:3000/api/mangas?page=${page}`
         );
 
         return {
@@ -13,21 +13,20 @@ function getMangasKakalot() {
     }
 }
 
-/* 
-ADAPT THIS HERE, TRABALHO DE CORNO
-async _getMangas() {
-    let request = new Request(this.url + '/seri-listesi?type=text', this.requestOptions);
-    let data = await this.fetchDOM(request, 'div#pop-href div[id^=char-] a');
-    return data.map(element => {
+function getSearchMangasKakalot() {
+    return async (search) => {
+        const response = await axios.get(
+            `http://localhost:3000/api/mangas/search?search=${search}`
+        );
+
         return {
-            id: this.getRootRelativeOrAbsoluteLink(element, this.url),
-            title: element.text.trim()
-        };
-    });
+            response
+        }
+    }
 }
 
-*/
 
 export const KakalotAPI = {
-    getMangasKakalot
+    getMangasKakalot,
+    getSearchMangasKakalot
 }

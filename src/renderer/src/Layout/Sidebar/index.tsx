@@ -1,18 +1,18 @@
 import React from 'react'
-import { SidebarContainer, SidebarHeader, SidebarNav, SidebarLink, SidebarSection, SidebarInput } from './styles'
-import LibList from './LibList'
+import { SidebarContainer, SidebarSection } from './styles'
 
 const Sidebar: React.FC = () => {
   return (
     <SidebarContainer>
-      <SidebarHeader>Tanukichi</SidebarHeader>
       <SidebarSection>
-        <h2>Library</h2>
-        <SidebarInput type="text" placeholder="Search..." />
+        Logo
       </SidebarSection>
-      <SidebarNav>
-        <LibList />
-      </SidebarNav>
+      <SidebarSection>
+        Home
+      </SidebarSection>
+      <SidebarSection>
+        Add
+      </SidebarSection>
     </SidebarContainer>
   )
 }

@@ -2,34 +2,34 @@ import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 
 export const SidebarContainer = styled.div`
-  width: 250px;
+  width: 8%;
   height: 100vh;
   background-color: #171738;
   color: white;
   display: flex;
   flex-direction: column;
-  padding: 0px 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  gap: 16px;
-  overflow-y: auto;
-  scrollbar-width: thin;
+`
+export const SidebarSection = styled.div`
+
+  height: 6vh;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2E1760;
 `
 
 export const SidebarHeader = styled.h1`
   font-size: 24px;
   text-align: center;
-    border-bottom: 1px solid #2E1760;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #2E1760;
 `
 
-export const SidebarSection = styled.div`
 
-  h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  padding-bottom: 20px;
-border-bottom: 1px solid #2E1760;
-`
 
 export const SidebarInput = styled.input`
   width: 100%;
