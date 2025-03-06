@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { HeaderContainer, SearchBar } from './styles'
-import { useGetSearchKakalot } from '@renderer/Features/Fetchers/Kakalot/Hooks';
 import { useSearchStore } from '@renderer/Features/Store/Kakalot/useSearchStore';
+import { useGetSearchWeebCentral } from '@renderer/Features/Fetchers/WeebCentral/Hooks';
 
 const Header: React.FC = () => {
     const { searchTerm, setSearchTerm, setData, setIsFetching } = useSearchStore();
 
-    const { data, refetch, isFetching } = useGetSearchKakalot(searchTerm);
+    const { data, refetch, isFetching } = useGetSearchWeebCentral(searchTerm);
 
     const handleSearch = async () => {
         setSearchTerm(searchTerm);

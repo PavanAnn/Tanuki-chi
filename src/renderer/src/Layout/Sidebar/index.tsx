@@ -1,5 +1,6 @@
 import React from 'react'
 import { SidebarContainer, SidebarSection } from './styles'
+import { Link } from 'react-router-dom'
 
 const Sidebar: React.FC = () => {
   return (
@@ -8,7 +9,7 @@ const Sidebar: React.FC = () => {
         Logo
       </SidebarSection>
       <SidebarSection>
-        Home
+        <Link to={'/'}>Home</Link>
       </SidebarSection>
       <SidebarSection>
         Add

@@ -3,6 +3,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import DefaultLayout from './Layout'
+import { MangaDetail } from './pages/MangaDetail'
 
 const AppRoutes: React.FC = () => {
   return (
@@ -10,7 +11,8 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
-        </Route>
+          <Route path="/detail" element={<MangaDetail />} />
+          </Route>
       </Routes>
     </BrowserRouter>
   )
