@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSearchMangasWeebCentral, getDetailMangasWeebCentral } from "../Requests/WeebCentralAPI";
+import { getSearchMangasWeebCentral, getDetailMangasWeebCentral, getMangasPagesWeebCentral } from "../Requests/WeebCentralAPI";
 
 /* export function useGetWeebCentral(page: number) {
     return useQuery({
@@ -31,4 +31,14 @@ export function useGetDetailMangasWeebCentral(search: string) {
         refetchInterval: false,
         refetchOnWindowFocus: false
     })
+}
+
+export function useGetMangasPagesWeebCentral(search?: string) {
+    return useQuery({
+        queryKey: ['weebcentral', search],
+        queryFn: async () => {
+            return getMangasPagesWeebCentral(search!);
+        },
+        enabled: !!search,
+    });
 }

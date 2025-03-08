@@ -37,8 +37,21 @@ function getDetailMangasWeebCentral() {
     }
 }
 
+function getMangasPagesWeebCentral() {
+    return async (search) => {
+        const response = await axios.get(
+            `http://localhost:3000/api/weebcentral/mangas/pages?search=${search}`
+        );
+
+        return {
+            response
+        }
+    }
+}
+
 
 export const WeebCentralAPI = {
     getSearchMangasWeebCentral,
-    getDetailMangasWeebCentral
+    getDetailMangasWeebCentral,
+    getMangasPagesWeebCentral
 }

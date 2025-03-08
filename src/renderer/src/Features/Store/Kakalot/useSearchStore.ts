@@ -7,6 +7,7 @@ interface SearchState {
   setData: (data: any) => void;
   isFetching: boolean;
   setIsFetching: (isFetching: boolean) => void;
+  clear: () => void;
 }
 
 export const useSearchStore = create<SearchState>((set) => ({
@@ -18,4 +19,11 @@ export const useSearchStore = create<SearchState>((set) => ({
 
   isFetching: false,
   setIsFetching: (isFetching) => set({ isFetching }),
+
+  clear: () =>
+    set({
+      searchTerm: "",
+      data: null,
+      isFetching: false,
+    }),
 }));

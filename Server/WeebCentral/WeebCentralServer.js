@@ -122,7 +122,6 @@ router.get('/mangas/search', async (req, res) => {
 // Route for manga detail -> to-do Remove the unnecessary headers and set-cookie response
     router.get('/mangas/detail', async (req, res) => {
         const { search } = req.query;
-        console.log('search -> ', search);
 
         let cookies = '';
 
@@ -173,5 +172,40 @@ router.get('/mangas/search', async (req, res) => {
             res.status(500).json({ error: 'Failed to fetch detail' });
         }
     });
+
+    router.get('/mangas/pages', async (req, res) => {
+        const { search } = req.query;
+
+
+        try {
+            const response = await axios.get(`${search}/images?is_prev=False&current_page=1&reading_style=long_strip`, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                }
+            })
+            const pages = [];
+
+            let html = response.data;
+            let $ = cheerio.load(html);
+
+
+            // Scrap all pages and its href
+            $('img').each((index, element) => {
+                const text = $(element).attr('alt')
+                const href = $(element).attr('src');
+
+                if (text) {
+                    pages.push({text, href});
+                }
+                });
+            
+
+            res.json({ pages });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to fetch pages' });
+        }
+    });
+
 
 module.exports = router;  // Export the router

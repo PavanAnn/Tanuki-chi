@@ -4,7 +4,7 @@ import { useSearchStore } from '@renderer/Features/Store/Kakalot/useSearchStore'
 import { useGetSearchWeebCentral } from '@renderer/Features/Fetchers/WeebCentral/Hooks';
 
 const Header: React.FC = () => {
-    const { searchTerm, setSearchTerm, setData, setIsFetching } = useSearchStore();
+    const { searchTerm, setSearchTerm, setData, setIsFetching, clear } = useSearchStore();
 
     const { data, refetch, isFetching } = useGetSearchWeebCentral(searchTerm);
 
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
             placeholder="Search for manga..."
         />
         <button onClick={handleSearch}>{isFetching ? 'Searching' : 'Search'}</button>
-        <button onClick={() => console.log(data)}>validate</button>
+        <button onClick={() => clear()}>clear</button>
     </HeaderContainer>
   )
 }

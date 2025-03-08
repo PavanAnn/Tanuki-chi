@@ -12,12 +12,7 @@ const Home: React.FC = () => {
     return (
       <div>loading</div>
     )
-  }
-
-  if (!data) {  // Ensure data is always checked
-    return <div>No mangas found</div>;
-  }
-  
+  }  
 
   const handleClick = (link: string, title: string) => {
     const encodedLink = encodeURIComponent(link);
@@ -34,7 +29,6 @@ const Home: React.FC = () => {
       data.map((manga) => (
         <MangaCard key={manga.id} onClick={() => handleClick(manga.href, manga.title)}>
           <h2>{manga.title}</h2>
-          <Link to={`/detail?link=${encodeURIComponent(manga.href)}`}>{manga.href}</Link>
         </MangaCard>
       ))
     ) : (
