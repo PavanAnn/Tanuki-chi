@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
 export const HeaderContainer = styled.div`
-  width: 92%;
+  width: 90%;
   height: 6vh;
   position: fixed;
-  margin-left: 8%;
+  margin-left: 10%;
   background-color: #171738;
   color: white;
   display: flex;

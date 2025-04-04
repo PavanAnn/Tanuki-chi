@@ -1,13 +1,12 @@
 import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
+import { Flex } from 'antd'
 
-export const SidebarContainer = styled.div`
-  width: 8%;
+export const SidebarContainer = styled(Flex)`
+  width: 10%;
   height: 100vh;
   background-color: #171738;
   color: white;
-  display: flex;
-  flex-direction: column;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 `
 export const SidebarSection = styled.div`

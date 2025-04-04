@@ -45,8 +45,8 @@ ipcMain.handle("get-bookmarks", () => {
   return getBookmarks();
 });
 
-ipcMain.handle("toggle-bookmark", (_event, title: string, link: string) => {
-  handleBookmark(title, link);
+ipcMain.handle("toggle-bookmark", (_event, title: string, link: string, coverHref: string) => {
+  handleBookmark(title, link, coverHref);
   return getBookmarks(); // check again later
 });
 

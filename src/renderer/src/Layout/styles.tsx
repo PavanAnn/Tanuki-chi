@@ -12,4 +12,5 @@ export const MainContent = styled.main`
   background-color: #2E1760;
   overflow-y: auto;
   margin-top: 6vh;
+  max-width: 90%;
 `

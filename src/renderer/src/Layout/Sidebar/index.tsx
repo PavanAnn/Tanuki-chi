@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom'
 
 const Sidebar: React.FC = () => {
   return (
-    <SidebarContainer>
+    <SidebarContainer vertical>
       <SidebarSection>
         Logo
       </SidebarSection>
       <SidebarSection>
-        <Link to={'/'}>Home</Link>
+        <Link to={'/'}>Search</Link>
       </SidebarSection>
       <SidebarSection>
       <Link to={'/bookmarks'}>Bookmarks</Link>

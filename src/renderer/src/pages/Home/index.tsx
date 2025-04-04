@@ -1,16 +1,23 @@
-import { Link, useNavigate } from "react-router-dom";
-import { HomeContainer, MangaGrid, MangaCard } from "./styles";
+import { useNavigate } from "react-router-dom";
+import { HomeContainer, MangaGrid } from "./styles";
 import { useSearchStore } from "@renderer/Features/Store/Kakalot/useSearchStore";
+import { useEffect } from "react";
+import { Card, Flex, Image, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Home: React.FC = () => {
  
   const navigate = useNavigate();
 
-  const { data, isFetching } = useSearchStore();
+  const { data, isFetching, setData } = useSearchStore();
+
+  // re-think if its necessary to clean the previous data
 
   if (isFetching) {
     return (
-      <div>loading</div>
+      <Flex align="center" gap="middle">
+        <Spin tip={<div>Fetching mangas</div>} fullscreen indicator={<LoadingOutlined spin />} size="large" />
+      </Flex>
     )
   }  
 
@@ -23,16 +30,19 @@ const Home: React.FC = () => {
  
   return (
     <HomeContainer>
-      <h1>Welcome to the Home Page</h1>
       <MangaGrid>
       {Array.isArray(data) && data.length > 0 ? (
-      data.map((manga) => (
-        <MangaCard key={manga.id} onClick={() => handleClick(manga.href, manga.title)}>
-          <h2>{manga.title}</h2>
-        </MangaCard>
-      ))
+        <Flex vertical gap="large">
+          <h1>Search results: </h1>
+          <Flex gap={'large'} style={{ flexDirection: 'row' }} wrap>
+            {data.map((manga) => (
+              <Card size="small" title={manga.title} key={manga.id} onClick={() => handleClick(manga.href, manga.title)} style={{ width: '15%', cursor: 'pointer' }}>
+                <Image preview={false} loading={'lazy'} src={manga.cover} />
+              </Card>
+            ))}
+          </Flex></Flex>
     ) : (
-      <div>No mangas found</div>
+      <div style={{ display	: 'flex', flexDirection: 'column' }}><h1>Welcome to the Home Page</h1><div>Search for mangas in the search bar on top</div></div>
     )}
       </MangaGrid>
     </HomeContainer>

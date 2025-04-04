@@ -55,7 +55,6 @@ router.get('/mangas/search', async (req, res) => {
     let allMangas = [];
     let offset = 0;
     const { search } = req.query;
-    console.log('Search Term:', search);
 
     if (!search) {
         return res.status(400).json({ error: 'Search term is required.' });
@@ -82,19 +81,19 @@ router.get('/mangas/search', async (req, res) => {
                 const link = secondSection.find('a.link-hover').eq(0);
                 const href = link.attr('href');
                 const title = link.text();
+                const cover = $(element).find('section').eq(0).find('picture').find('img').attr('src');
+
             
                 if (title && href) {
-                    currentMangas.push({ title, href });
+                    currentMangas.push({ title, href, cover });
                 }
             });
             
             if (currentMangas.length === 0) {
-                console.log('No mangas found on page');
                 break;
             }
 
             if (previousMangas.length > 0 && previousMangas[0].title === currentMangas[currentMangas.length - 1].title) {
-                console.log('Reached last page');
                 break;
             }
 
@@ -144,7 +143,7 @@ router.get('/mangas/search', async (req, res) => {
             const status = $('li:has(strong:contains("Status:")) a').text().trim();
             const chapters = [];
             const latestChapter = $('#chapter-list .flex a').first().find('span').eq(1).find('span').eq(0).text();
-            const cover = $('picture').first().find('img').attr('src');
+            const coverHref = $('picture').first().find('img').attr('src');
 
             html = responseAllMangas.data;
             $ = cheerio.load(html);
@@ -213,17 +212,16 @@ router.get('/mangas/search', async (req, res) => {
     
         try {
             const response = await axios.get(url, {
-                responseType: 'arraybuffer', // images
+                responseType: 'arraybuffer',
                 headers: {
-                    "Referer": "secret from twitter",
-                    "Sec-CH-UA": `"Chromium";v="134", "Not:A-Brand";v="24", "Brave";v="134"`,
+                    "Referer": "https://weebcentral.com/",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+                    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+                    "Sec-CH-UA": `"Not/A)Brand";v="8", "Chromium";v="126"`,
                     "Sec-CH-UA-Mobile": "?0",
-                    "Sec-CH-UA-Platform": `"Windows"`,
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
-                    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8"
+                    "Sec-CH-UA-Platform": `"Windows"`
                 }
             });
-    
             res.set('Content-Type', response.headers['content-type']);
             res.send(response.data);
         } catch (error) {
