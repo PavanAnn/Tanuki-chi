@@ -12,7 +12,7 @@ import { getSearchMangasWeebCentral, getDetailMangasWeebCentral, getMangasPagesW
 
 export function useGetSearchWeebCentral(search: string) {
     return useQuery({
-        queryKey: ['weebcentral', search],
+        queryKey: ['weebcentralsearch', search],
         queryFn: async () => {
             return getSearchMangasWeebCentral(search)
         },
@@ -22,7 +22,7 @@ export function useGetSearchWeebCentral(search: string) {
 
 export function useGetDetailMangasWeebCentral(search: string) {
     return useQuery({
-        queryKey: ['weebcentral', search],
+        queryKey: ['weebcentraldetail', search],
         queryFn: async () => {
             return getDetailMangasWeebCentral(search)
         },
@@ -35,7 +35,7 @@ export function useGetDetailMangasWeebCentral(search: string) {
 
 export function useGetMangasPagesWeebCentral(search?: string) {
     return useQuery({
-        queryKey: ['weebcentral', search],
+        queryKey: ['weebcentralpages', search],
         queryFn: async () => {
             return getMangasPagesWeebCentral(search!);
         },

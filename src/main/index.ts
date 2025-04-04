@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { getBookmarks, handleBookmark } from "./bookmarkStore";
 
 function createWindow(): void {
   // Create the browser window.
@@ -12,11 +13,12 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: join(__dirname, '../preload/index.mjs'),
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      
     }
   })
 
@@ -37,6 +39,18 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+// Custom bookmark pavan ---------------------------
+ipcMain.handle("get-bookmarks", () => {
+  return getBookmarks();
+});
+
+ipcMain.handle("toggle-bookmark", (_event, title: string, link: string) => {
+  handleBookmark(title, link);
+  return getBookmarks(); // check again later
+});
+
+// -------------------------------------------------
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

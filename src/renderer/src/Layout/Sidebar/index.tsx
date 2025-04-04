@@ -12,7 +12,7 @@ const Sidebar: React.FC = () => {
         <Link to={'/'}>Home</Link>
       </SidebarSection>
       <SidebarSection>
-        Add
+      <Link to={'/bookmarks'}>Bookmarks</Link>
       </SidebarSection>
     </SidebarContainer>
   )

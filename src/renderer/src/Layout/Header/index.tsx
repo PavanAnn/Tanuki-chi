@@ -6,7 +6,7 @@ import { useGetSearchWeebCentral } from '@renderer/Features/Fetchers/WeebCentral
 const Header: React.FC = () => {
     const { searchTerm, setSearchTerm, setData, setIsFetching, clear } = useSearchStore();
 
-    const { data, refetch, isFetching } = useGetSearchWeebCentral(searchTerm);
+    const { refetch, isFetching } = useGetSearchWeebCentral(searchTerm);
 
     const handleSearch = async () => {
         setSearchTerm(searchTerm);

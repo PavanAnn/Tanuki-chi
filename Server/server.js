@@ -1,10 +1,10 @@
 // server.js
-const express = require('express');
+import express from 'express';
+import weebCentralRoutes from './WeebCentral/WeebCentralServer.js'
 const app = express();
 const port = 3000;
 
 // Import the WeebCentral API handlers
-const weebCentralRoutes = require('./WeebCentral/WeebCentralServer');
 
 // Use the WeebCentral routes with a base path
 app.use('/api/weebcentral', weebCentralRoutes); // All routes from WeebCentral.js are now prefixed with /api/weebcentral

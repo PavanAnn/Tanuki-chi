@@ -1,8 +1,8 @@
 // WeebCentral.js
-const express = require('express');
-const puppeteer = require('puppeteer');
-const axios = require('axios');
-const cheerio = require('cheerio');
+import express from 'express';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+
 
 const router = express.Router();  // Use Router to define routes
 
@@ -32,7 +32,6 @@ router.get('/mangas', async (req, res) => {
             }
         });
 
-        // Check for last page
         if (mangas.length > 0 && allMangas.length > 0 && allMangas[allMangas.length - 1].title === mangas[mangas.length - 1].title) {
             console.log('Reached last page');
         }
@@ -54,11 +53,10 @@ router.get('/mangas', async (req, res) => {
 // Route for searching mangas
 router.get('/mangas/search', async (req, res) => {
     let allMangas = [];
-    let offset = 0;  // Starting from the first item
-    const { search } = req.query;  // The search term provided by the user
+    let offset = 0;
+    const { search } = req.query;
     console.log('Search Term:', search);
 
-    // Check if the user has provided a search term
     if (!search) {
         return res.status(400).json({ error: 'Search term is required.' });
     }
@@ -78,40 +76,35 @@ router.get('/mangas/search', async (req, res) => {
 
 
             currentMangas = [];
-            $('abbr.no-underline').each((index, element) => {
-                const link = $(element).find('a.link-hover'); // Find <a> inside <abbr>
-                const href = link.attr('href'); // Extract the href attribute
+            // search-results
+            $('article').each((index, element) => {
+                const secondSection = $(element).find('section').eq(1);
+                const link = secondSection.find('a.link-hover').eq(0);
+                const href = link.attr('href');
                 const title = link.text();
             
-                // Check if both title and link are available
                 if (title && href) {
                     currentMangas.push({ title, href });
                 }
             });
             
-            // If no new mangas are found, we are done
             if (currentMangas.length === 0) {
                 console.log('No mangas found on page');
                 break;
             }
 
-            // Check if we've reached the last page
             if (previousMangas.length > 0 && previousMangas[0].title === currentMangas[currentMangas.length - 1].title) {
                 console.log('Reached last page');
                 break;
             }
 
-            // Add current page to the list of all mangas
             allMangas = allMangas.concat(currentMangas);
 
-            // Move to the next page by incrementing the offset by 32
             offset += 32;
 
-            // Set the previous page's mangas for comparison in the next loop
             previousMangas = currentMangas;
         }
 
-        // Return all the fetched mangas
         res.json(allMangas);
     } catch (error) {
         console.error('Error fetching data:', error.message);
@@ -151,6 +144,7 @@ router.get('/mangas/search', async (req, res) => {
             const status = $('li:has(strong:contains("Status:")) a').text().trim();
             const chapters = [];
             const latestChapter = $('#chapter-list .flex a').first().find('span').eq(1).find('span').eq(0).text();
+            const cover = $('picture').first().find('img').attr('src');
 
             html = responseAllMangas.data;
             $ = cheerio.load(html);
@@ -164,9 +158,11 @@ router.get('/mangas/search', async (req, res) => {
                     chapters.push({text, href});
                 }
                 });
-            
 
-            res.json({ author, status, latestChapter, chapters });
+
+                // author is broken
+
+            res.json({ author, status, latestChapter, chapters, coverHref });
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: 'Failed to fetch detail' });
@@ -207,5 +203,36 @@ router.get('/mangas/search', async (req, res) => {
         }
     });
 
+    // proxy inside a proxy so cloudfront wont fuck me up
+    router.get('/mangas/image-proxy', async (req, res) => {
+        const { url } = req.query;
+    
+        if (!url) {
+            return res.status(400).json({ error: "Missing image URL" });
+        }
+    
+        try {
+            const response = await axios.get(url, {
+                responseType: 'arraybuffer', // images
+                headers: {
+                    "Referer": "secret from twitter",
+                    "Sec-CH-UA": `"Chromium";v="134", "Not:A-Brand";v="24", "Brave";v="134"`,
+                    "Sec-CH-UA-Mobile": "?0",
+                    "Sec-CH-UA-Platform": `"Windows"`,
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+                    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8"
+                }
+            });
+    
+            res.set('Content-Type', response.headers['content-type']);
+            res.send(response.data);
+        } catch (error) {
+            console.error("Image proxy error:", error.message);
+            res.status(500).json({ error: 'Failed to fetch image' });
+        }
+    });
+    
+    
 
-module.exports = router;  // Export the router
+
+export default router;
