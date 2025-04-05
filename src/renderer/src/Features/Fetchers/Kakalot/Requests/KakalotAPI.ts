@@ -1,5 +1,4 @@
-import { KakalotAPI } from "./dataRequest";
+import { KakalotAPI } from './dataRequest'
 
-
-export const getMangasKakalot = KakalotAPI.getMangasKakalot();
-export const getSearchMangasKakalot = KakalotAPI.getSearchMangasKakalot();
+export const getMangasKakalot = KakalotAPI.getMangasKakalot()
+export const getSearchMangasKakalot = KakalotAPI.getSearchMangasKakalot()

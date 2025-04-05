@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 
 /*
 function getMangasKakalot() {
@@ -14,44 +14,43 @@ function getMangasKakalot() {
 } */
 
 function getSearchMangasWeebCentral() {
-    return async (search) => {
-        const response = await axios.get(
-            `http://localhost:3000/api/weebcentral/mangas/search?search=${search}`
-        );
+  return async (search) => {
+    const response = await axios.get(
+      `http://localhost:3000/api/weebcentral/mangas/search?search=${search}`
+    )
 
-        return {
-            response
-        }
+    return {
+      response
     }
+  }
 }
 
 function getDetailMangasWeebCentral() {
-    return async (search) => {
-        const response = await axios.get(
-            `http://localhost:3000/api/weebcentral/mangas/detail?search=${search}`
-        );
+  return async (search) => {
+    const response = await axios.get(
+      `http://localhost:3000/api/weebcentral/mangas/detail?search=${search}`
+    )
 
-        return {
-            response
-        }
+    return {
+      response
     }
+  }
 }
 
 function getMangasPagesWeebCentral() {
-    return async (search) => {
-        const response = await axios.get(
-            `http://localhost:3000/api/weebcentral/mangas/pages?search=${search}`
-        );
+  return async (search) => {
+    const response = await axios.get(
+      `http://localhost:3000/api/weebcentral/mangas/pages?search=${search}`
+    )
 
-        return {
-            response
-        }
+    return {
+      response
     }
+  }
 }
 
-
 export const WeebCentralAPI = {
-    getSearchMangasWeebCentral,
-    getDetailMangasWeebCentral,
-    getMangasPagesWeebCentral
+  getSearchMangasWeebCentral,
+  getDetailMangasWeebCentral,
+  getMangasPagesWeebCentral
 }

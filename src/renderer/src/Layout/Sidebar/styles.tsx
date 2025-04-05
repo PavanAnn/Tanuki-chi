@@ -10,13 +10,12 @@ export const SidebarContainer = styled(Flex)`
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 `
 export const SidebarSection = styled.div`
-
   height: 6vh;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #2E1760;
+  border: 1px solid #2e1760;
 `
 
 export const SidebarHeader = styled.h1`
@@ -25,10 +24,8 @@ export const SidebarHeader = styled.h1`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #2E1760;
+  border-bottom: 1px solid #2e1760;
 `
-
-
 
 export const SidebarInput = styled.input`
   width: 100%;

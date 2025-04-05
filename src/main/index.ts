@@ -2,7 +2,27 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { getBookmarks, handleBookmark } from "./bookmarkStore";
+import { getBookmarks, handleBookmark } from './bookmarkStore'
+import { spawn } from 'child_process'
+
+function startServer() {
+  const isDev = !app.isPackaged
+  const serverPath = isDev
+    ? join(__dirname, '../../Server/server.js')
+    : join(process.resourcesPath, 'Server/server.js')
+
+  const server = spawn('node', [serverPath], {
+    stdio: 'inherit',
+    shell: true,
+    windowsHide: true
+  })
+
+  server.on('error', (err) => {
+    console.error('Failed to start server:', err)
+  })
+
+  process.on('exit', () => server.kill())
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -17,8 +37,7 @@ function createWindow(): void {
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: true,
-      webSecurity: false,
-      
+      webSecurity: false
     }
   })
 
@@ -41,14 +60,14 @@ function createWindow(): void {
 }
 
 // Custom bookmark pavan ---------------------------
-ipcMain.handle("get-bookmarks", () => {
-  return getBookmarks();
-});
+ipcMain.handle('get-bookmarks', () => {
+  return getBookmarks()
+})
 
-ipcMain.handle("toggle-bookmark", (_event, title: string, link: string, coverHref: string) => {
-  handleBookmark(title, link, coverHref);
-  return getBookmarks(); // check again later
-});
+ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHref: string) => {
+  handleBookmark(title, link, coverHref)
+  return getBookmarks() // check again later
+})
 
 // -------------------------------------------------
 
@@ -69,6 +88,7 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  startServer()
   createWindow()
 
   app.on('activate', function () {

@@ -13,8 +13,8 @@ const AppRoutes: React.FC = () => {
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/detail" element={<MangaDetail />} />
-          <Route path='/bookmarks' element={<Bookmarks />} />
-          </Route>
+          <Route path="/bookmarks" element={<Bookmarks />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )

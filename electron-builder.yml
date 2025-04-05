@@ -3,6 +3,9 @@ productName: tanuki-chi
 directories:
   buildResources: build
 files:
+  - 'out/**'
+  - 'resources/**'
+  - 'Server/**'
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
@@ -11,6 +14,7 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+  - Server/**
 win:
   executableName: tanuki-chi
 nsis:

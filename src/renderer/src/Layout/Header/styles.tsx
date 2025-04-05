@@ -11,8 +11,7 @@ export const HeaderContainer = styled.div`
   flex-direction: row;
   align-items: center;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  border: 1px solid #2E1760;
-
+  border: 1px solid #2e1760;
 `
 
 export const SearchBar = styled.input`

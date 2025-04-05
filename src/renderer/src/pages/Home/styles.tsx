@@ -1,17 +1,17 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const HomeContainer = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-`;
+`
 
 export const MangaGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-`;
+`
 
 export const MangaCard = styled.div`
   background-color: #fff;
@@ -30,4 +30,4 @@ export const MangaCard = styled.div`
     font-size: 1rem;
     color: #555;
   }
-`;
+`

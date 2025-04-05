@@ -1,17 +1,17 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 interface SearchState {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  data: any;
-  setData: (data: any) => void;
-  isFetching: boolean;
-  setIsFetching: (isFetching: boolean) => void;
-  clear: () => void;
+  searchTerm: string
+  setSearchTerm: (term: string) => void
+  data: any
+  setData: (data: any) => void
+  isFetching: boolean
+  setIsFetching: (isFetching: boolean) => void
+  clear: () => void
 }
 
 export const useSearchStore = create<SearchState>((set) => ({
-  searchTerm: "",
+  searchTerm: '',
   setSearchTerm: (term) => set({ searchTerm: term }),
 
   data: null,
@@ -22,8 +22,8 @@ export const useSearchStore = create<SearchState>((set) => ({
 
   clear: () =>
     set({
-      searchTerm: "",
+      searchTerm: '',
       data: null,
-      isFetching: false,
-    }),
-}));
+      isFetching: false
+    })
+}))
