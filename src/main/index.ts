@@ -1,36 +1,15 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import path, { join } from 'path'
+import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { getBookmarks, handleBookmark } from './bookmarkStore'
-import { spawn } from 'child_process'
-
-function startServer() {
-  const isProd = app.isPackaged;
-  const serverPath = isProd
-    ? path.join(process.resourcesPath, 'app.asar.unpacked', 'Server', 'server.js')
-    : path.join(__dirname, '../../Server/server.js');
-
-  console.log('Starting server from:', serverPath);
-
-  const server = spawn('node', [serverPath], {
-    stdio: 'inherit',
-    shell: true,
-  });
-
-  server.on('error', (err) => {
-    console.error('Server failed to start:', err);
-  });
-  server.on('exit', (code, signal) => {
-    console.error(`Server exited with code ${code} and signal ${signal}`);
-  });
-}
+import { startExpressServer } from '../../Server/server'; // Adjust path as needed
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1200,
+    height: 970,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -43,6 +22,8 @@ function createWindow(): void {
       devTools: true,
     }
   })
+
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -78,7 +59,7 @@ ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHre
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  startServer()
+  startExpressServer()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

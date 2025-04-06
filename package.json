@@ -15,7 +15,7 @@
     "start": "electron-vite preview",
     "start-server": "node Server/server.js",
     "start-electron": "electron-vite dev",
-    "dev": "concurrently \"pnpm start-server\" \"pnpm start-electron\"",
+    "dev": "pnpm run start-electron",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",

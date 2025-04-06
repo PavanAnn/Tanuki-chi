@@ -1,20 +1,23 @@
 // server.js
-import express from 'express'
-import weebCentralRoutes from './WeebCentral/WeebCentralServer.js'
-const app = express()
-const port = 3000
+import express from 'express';
+import weebCentralRoutes from './WeebCentral/WeebCentralServer.js';
 
-// Import the WeebCentral API handlers
+export function startExpressServer() {
+  const app = express();
+  const port = 3000;
 
-// Use the WeebCentral routes with a base path
-app.use('/api/weebcentral', weebCentralRoutes) // All routes from WeebCentral.js are now prefixed with /api/weebcentral
+  console.log('--- Express server is starting ---');
 
-// Default route
-app.get('/', (req, res) => {
-  res.send('Welcome to the main server!')
-})
+  // Use the WeebCentral routes with a base path
+  app.use('/api/weebcentral', weebCentralRoutes);
 
-// Start the server
-app.listen(port, '127.0.0.1', () => {
-  console.log(`Server is running on http://127.0.0.1:${port}`)
-})
+  // Default route
+  app.get('/', (req, res) => {
+    res.send('Welcome to the main server!');
+  });
+
+  // Start the server
+  app.listen(port, '127.0.0.1', () => {
+    console.log(`Server is running on http://127.0.0.1:${port}`);
+  });
+}
