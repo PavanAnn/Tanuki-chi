@@ -203,7 +203,7 @@ export const MangaDetail = () => {
             >
               <Image
                 width="100%"
-                src={`http://localhost:3000/api/weebcentral/mangas/image-proxy?url=${encodeURIComponent(element.href)}`}
+                src={`http://127.0.0.1:3000/api/weebcentral/mangas/image-proxy?url=${encodeURIComponent(element.href)}`}
                 preview={false}
               />
             </Flex>

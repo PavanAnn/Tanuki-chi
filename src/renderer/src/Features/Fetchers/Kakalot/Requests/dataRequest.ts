@@ -2,7 +2,7 @@ import axios from 'axios'
 
 function getMangasKakalot() {
   return async (page) => {
-    const response = await axios.get(`http://localhost:3000/api/mangas?page=${page}`)
+    const response = await axios.get(`http://127.0.0.1:3000/api/mangas?page=${page}`)
 
     return {
       response
@@ -12,7 +12,7 @@ function getMangasKakalot() {
 
 function getSearchMangasKakalot() {
   return async (search) => {
-    const response = await axios.get(`http://localhost:3000/api/mangas/search?search=${search}`)
+    const response = await axios.get(`http://127.0.0.1:3000/api/mangas/search?search=${search}`)
 
     return {
       response

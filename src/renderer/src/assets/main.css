@@ -3,7 +3,6 @@
 body {
   display: flex;
   overflow: hidden;
-  background-image: url('./wavy-lines.svg');
   background-size: cover;
   user-select: none;
 }

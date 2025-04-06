@@ -4,7 +4,7 @@ import axios from 'axios'
 function getMangasKakalot() {
     return async (page) => {
         const response = await axios.get(
-            `http://localhost:3000/api/mangas?page=${page}`
+            `http://127.0.0.1:3000/api/mangas?page=${page}`
         );
 
         return {
@@ -16,7 +16,7 @@ function getMangasKakalot() {
 function getSearchMangasWeebCentral() {
   return async (search) => {
     const response = await axios.get(
-      `http://localhost:3000/api/weebcentral/mangas/search?search=${search}`
+      `http://127.0.0.1:3000/api/weebcentral/mangas/search?search=${search}`
     )
 
     return {
@@ -28,7 +28,7 @@ function getSearchMangasWeebCentral() {
 function getDetailMangasWeebCentral() {
   return async (search) => {
     const response = await axios.get(
-      `http://localhost:3000/api/weebcentral/mangas/detail?search=${search}`
+      `http://127.0.0.1:3000/api/weebcentral/mangas/detail?search=${search}`
     )
 
     return {
@@ -40,7 +40,7 @@ function getDetailMangasWeebCentral() {
 function getMangasPagesWeebCentral() {
   return async (search) => {
     const response = await axios.get(
-      `http://localhost:3000/api/weebcentral/mangas/pages?search=${search}`
+      `http://127.0.0.1:3000/api/weebcentral/mangas/pages?search=${search}`
     )
 
     return {

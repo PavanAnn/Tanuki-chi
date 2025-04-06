@@ -1,27 +1,29 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { getBookmarks, handleBookmark } from './bookmarkStore'
 import { spawn } from 'child_process'
 
 function startServer() {
-  const isDev = !app.isPackaged
-  const serverPath = isDev
-    ? join(__dirname, '../../Server/server.js')
-    : join(process.resourcesPath, 'Server/server.js')
+  const isProd = app.isPackaged;
+  const serverPath = isProd
+    ? path.join(process.resourcesPath, 'app.asar.unpacked', 'Server', 'server.js')
+    : path.join(__dirname, '../../Server/server.js');
+
+  console.log('Starting server from:', serverPath);
 
   const server = spawn('node', [serverPath], {
     stdio: 'inherit',
     shell: true,
-    windowsHide: true
-  })
+  });
 
   server.on('error', (err) => {
-    console.error('Failed to start server:', err)
-  })
-
-  process.on('exit', () => server.kill())
+    console.error('Server failed to start:', err);
+  });
+  server.on('exit', (code, signal) => {
+    console.error(`Server exited with code ${code} and signal ${signal}`);
+  });
 }
 
 function createWindow(): void {
@@ -37,7 +39,8 @@ function createWindow(): void {
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      devTools: true,
     }
   })
 
@@ -75,6 +78,7 @@ ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHre
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  startServer()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -88,7 +92,6 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  startServer()
   createWindow()
 
   app.on('activate', function () {

@@ -1,6 +1,6 @@
 // src/routes.ts
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import DefaultLayout from './Layout'
 import { MangaDetail } from './pages/MangaDetail'
@@ -8,7 +8,7 @@ import { Bookmarks } from './pages/Bookmarks'
 
 const AppRoutes: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
@@ -16,7 +16,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/bookmarks" element={<Bookmarks />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
