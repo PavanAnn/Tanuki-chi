@@ -14,13 +14,15 @@ export const DetailInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
 `
+export const ChaptersListWrapper = styled.div`
+  display: inline-block;
+`
 
 export const ChaptersContainer = styled.div`
   display: flex;
-  border: 1px solid #171738;
-  min-width: 10%;
-  max-width: fit-content;
-  gap: 18px;
-  margin-bottom: 12px;
-  cursor: pointer;
+  justify-content: space-between;
+  border: 1px solid ${({ theme }) => theme.colors.secondary};
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
 `

@@ -5,13 +5,13 @@ export const HeaderContainer = styled.div`
   height: 6vh;
   position: fixed;
   margin-left: 10%;
-  background-color: #171738;
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   display: flex;
   flex-direction: row;
   align-items: center;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  border: 1px solid #2e1760;
+  border: 1px solid ${({ theme }) => theme.colors.bg};
 `
 
 export const SearchBar = styled.input`

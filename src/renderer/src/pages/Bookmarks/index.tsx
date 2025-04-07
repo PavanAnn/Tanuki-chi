@@ -1,4 +1,4 @@
-import { Card, Image } from 'antd'
+import { Button, Card, Image } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -29,8 +29,13 @@ export const Bookmarks: React.FC = () => {
     fetchBookmarks()
   }, [])
 
+  const handleClear = () => {
+    window.api.clearBookmarks()
+    setBookmarks([])
+  }
+
   return (
-    <div style={{ display: 'flex', gap: '18px' }}>
+    <><Button onClick={() => { handleClear() } }>Clear bookmarks</Button><div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
       {bookmarks.map((item) => (
         <Card
           onClick={() => handleNavigate(item.link, item.title)}
@@ -38,9 +43,9 @@ export const Bookmarks: React.FC = () => {
           variant="borderless"
           style={{ width: 300, cursor: 'pointer' }}
         >
-          <Image src={item.cover} preview={false} />
+          <Image width={'100%'} src={item.cover} preview={false} />
         </Card>
       ))}
-    </div>
+    </div></>
   )
 }

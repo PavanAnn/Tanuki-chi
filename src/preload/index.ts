@@ -5,7 +5,10 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   getBookmarks: () => ipcRenderer.invoke('get-bookmarks'),
   toggleBookmark: (title: string, link: string, coverHref: string) =>
-    ipcRenderer.invoke('toggle-bookmark', title, link, coverHref)
+    ipcRenderer.invoke('toggle-bookmark', title, link, coverHref),
+  updateLatestRead: (title: string, link: string, latestRead: string | null) =>
+    ipcRenderer.invoke('update-latest-read', title, link, latestRead),
+  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks'),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

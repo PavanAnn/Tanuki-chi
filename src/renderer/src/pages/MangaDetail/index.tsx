@@ -1,4 +1,4 @@
-import { StarFilled, StarOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons'
+import { BookOutlined, StarFilled, StarOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons'
 import {
   useGetDetailMangasWeebCentral,
   useGetMangasPagesWeebCentral
@@ -6,7 +6,8 @@ import {
 import { Divider, Drawer, Flex, Image } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { BookmarkContainer, ChaptersContainer, DetailInfoContainer, DetailTitle } from './styles'
+import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailInfoContainer, DetailTitle } from './styles'
+import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles'
 
 interface Chapters {
   text: string
@@ -32,6 +33,7 @@ export const MangaDetail = () => {
   const [selectedLink, setSelectedLink] = useState<string | null>(null)
   const [selectedChapter, setSelectedChapter] = useState<string | null>(null)
   const [bookmarked, setBookmarked] = useState(false)
+  const [latest, setLatest] = useState<string | undefined>()
   const [pageSize, setPageSize] = useState(50)
   const scrollRef = useRef<HTMLDivElement>(null)
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -44,15 +46,21 @@ export const MangaDetail = () => {
 
   // Verifica se o manga atual está nos bookmarks sempre que title ou link mudarem
   useEffect(() => {
-    const checkBookmark = async () => {
-      if (title && link) {
-        const bookmarks = await window.api.getBookmarks()
-        const isBookmarked = bookmarks.some((b) => b.title === title && b.link === link)
-        setBookmarked(isBookmarked)
+    const checkBookmarkDetails = async () => {
+      if (!title || !link) return
+  
+      const bookmarks = await window.api.getBookmarks()
+      const currentBookmark = bookmarks.find((b) => b.title === title && b.link === link)
+  
+      setBookmarked(Boolean(currentBookmark))
+      if (currentBookmark?.latestRead) {
+        setLatest(currentBookmark.latestRead)
       }
     }
-    checkBookmark()
+  
+    checkBookmarkDetails()
   }, [title, link])
+  
 
   const startScrolling = (direction: 'up' | 'down') => {
     const container = scrollRef.current
@@ -128,6 +136,16 @@ export const MangaDetail = () => {
     }
   }
 
+  // Array de objetos com o latestRead -> chapter name
+  const handleLatestRead = async (chapter: string) => {
+    if (!title || !link) return
+  
+    const newLatest = latest === chapter ? undefined : chapter
+  
+    await window.api.updateLatestRead(title, link, newLatest ?? null)
+    setLatest(newLatest)
+  }
+  
   return (
     <div>
       <div style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}>
@@ -149,7 +167,7 @@ export const MangaDetail = () => {
               )}
             </BookmarkContainer>
           </DetailTitle>
-          <Divider style={{ borderColor: '#171738' }} />
+          <ThemedDivider  />
           <DetailInfoContainer>
             <p>Author: {res.author}</p>
             <p>Status: {res.status}</p>
@@ -157,21 +175,22 @@ export const MangaDetail = () => {
           </DetailInfoContainer>
         </div>
       </div>
-
-      <Divider style={{ borderColor: '#171738' }} />
-      {res.chapters.map((element) => (
-        <ChaptersContainer
-          key={element.href}
-          onClick={() => showDrawer(element.href, element.text)}
-        >
+      <ThemedDivider  />
+      <ChaptersListWrapper>
+      {res.chapters.map((element, index) => (
+        <ChaptersContainer key={index}>
+          <div key={element.href} onClick={() => showDrawer(element.href, element.text)} style={{ cursor: 'pointer' }}>
           {element.text}
+          </div>
+          <BookOutlined onClick={() => {handleLatestRead(element.text)}} style={{ cursor: 'pointer', color: element.text === latest ? '#FFFF00' : '#433D8B' }}/>
         </ChaptersContainer>
-      ))}
+      ))}</ChaptersListWrapper>
       <Drawer
         aria-roledescription="navigation"
         width={'90%'}
         extra={
           <Flex gap={'16px'}>
+            Next chapter
             <ZoomInOutlined onClick={() => setPageSize(pageSize < 90 ? pageSize + 10 : 100)} />
             <ZoomOutOutlined onClick={() => setPageSize(pageSize > 20 ? pageSize - 10 : 20)} />
           </Flex>

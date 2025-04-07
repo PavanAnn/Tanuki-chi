@@ -5,9 +5,10 @@ import { Flex } from 'antd'
 export const SidebarContainer = styled(Flex)`
   width: 10%;
   height: 100vh;
-  background-color: #171738;
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid ${({ theme }) => theme.colors.bg};
 `
 export const SidebarSection = styled.div`
   height: 6vh;
@@ -15,7 +16,7 @@ export const SidebarSection = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #2e1760;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.bg};
 `
 
 export const SidebarHeader = styled.h1`
@@ -24,7 +25,7 @@ export const SidebarHeader = styled.h1`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #2e1760;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.bg};
 `
 
 export const SidebarInput = styled.input`

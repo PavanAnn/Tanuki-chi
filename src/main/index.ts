@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { getBookmarks, handleBookmark } from './bookmarkStore'
+import { clearBookmarks, getBookmarks, handleBookmark, updateLatestRead } from './bookmarkStore'
 import { startExpressServer } from '../../Server/server'; // Adjust path as needed
 
 function createWindow(): void {
@@ -22,8 +22,6 @@ function createWindow(): void {
       devTools: true,
     }
   })
-
-  mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -48,9 +46,17 @@ ipcMain.handle('get-bookmarks', () => {
   return getBookmarks()
 })
 
-ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHref: string) => {
-  handleBookmark(title, link, coverHref)
+ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHref: string, latestRead?: string) => {
+  handleBookmark(title, link, coverHref, latestRead)
   return getBookmarks() // check again later
+})
+
+ipcMain.handle('update-latest-read', (_event, title: string, link: string, latestRead: string | null) => {
+  updateLatestRead(title, link, latestRead)
+})
+
+ipcMain.handle('clear-bookmarks', () => {
+  return clearBookmarks()
 })
 
 // -------------------------------------------------
