@@ -12,6 +12,9 @@ const Sidebar: React.FC = () => {
       <SidebarSection>
         <Link to={'/bookmarks'}>Bookmarks</Link>
       </SidebarSection>
+      <SidebarSection>
+        <Link to={'/share'}>Import/Export</Link>
+      </SidebarSection>
     </SidebarContainer>
   )
 }

@@ -16,9 +16,7 @@ export const Bookmarks: React.FC = () => {
   useEffect(() => {
     const fetchBookmarks = async () => {
       const savedBookmarks = await window.api.getBookmarks()
-      // Assuming you want to map over the bookmarks:
       const mappedBookmarks = savedBookmarks.map((item: any) => ({
-        // Adjust mapping as needed, for example:
         title: item.title,
         link: item.link,
         cover: item.coverHref
