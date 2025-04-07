@@ -97,7 +97,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
           <div style={{ color: 'black' }}>{title}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {extra}
-            <CloseButton onClick={onClose}>&times;</CloseButton>
+            <CloseButton style={{ color: '#000957' }} onClick={onClose}>&times;</CloseButton>
           </div>
         </DrawerHeader>
         <DrawerBody>{children}</DrawerBody>

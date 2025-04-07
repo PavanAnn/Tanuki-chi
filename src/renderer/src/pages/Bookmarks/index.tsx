@@ -35,7 +35,7 @@ export const Bookmarks: React.FC = () => {
   }
 
   return (
-    <><Button onClick={() => { handleClear() } }>Clear bookmarks</Button><div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+    <><Button onClick={() => { handleClear() } }>Clear bookmarks</Button><div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap', marginTop: '24px' }}>
       {bookmarks.map((item) => (
         <Card
           onClick={() => handleNavigate(item.link, item.title)}

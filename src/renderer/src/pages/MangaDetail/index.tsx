@@ -1,14 +1,14 @@
-import { BookOutlined, StarFilled, StarOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
+import { BookOutlined, LeftOutlined, RightOutlined, StarFilled, StarOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
 import {
   useGetDetailMangasWeebCentral,
   useGetMangasPagesWeebCentral
 } from '@renderer/Features/Fetchers/WeebCentral/Hooks';
-import { Flex, Image } from 'antd';
+import { Button, Flex, Image, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailInfoContainer, DetailTitle } from './styles';
 import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles';
-import { CustomDrawer } from './Drawer'; // adjust the path as needed
+import { CustomDrawer } from './Drawer';
 
 interface Chapters {
   text: string;
@@ -91,6 +91,22 @@ export const MangaDetail = () => {
     setLatest(newLatest);
   };
 
+  const handleNextChapter = (link: string, chapter: string) => {
+    setSelectedChapter(chapter);
+    setSelectedLink(link);
+  }
+
+  const chapterIndex = res.chapters.findIndex(ch => ch.text === selectedChapter);
+
+const changeChapter = (offset: number, chapter: string | null) => {
+  if (chapter) handleLatestRead(chapter);
+  
+  const target = res.chapters[chapterIndex + offset];
+  if (target) {
+    handleNextChapter(target.href, target.text);
+  }
+};
+
   return (
     <div>
       <div style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}>
@@ -142,9 +158,28 @@ export const MangaDetail = () => {
         width="90%"
         extra={
           <Flex gap="16px">
-            Next chapter
-            <ZoomInOutlined onClick={() => setPageSize(pageSize < 90 ? pageSize + 10 : 100)} />
-            <ZoomOutOutlined onClick={() => setPageSize(pageSize > 20 ? pageSize - 10 : 20)} />
+            <Button
+              disabled={chapterIndex === res.chapters.length - 1}
+              onClick={() => changeChapter(1, selectedChapter)}
+              shape="default"
+              icon={<LeftOutlined />}
+            >
+              Previous chapter
+            </Button>
+
+            <Button
+              disabled={chapterIndex === 0}
+              onClick={() => changeChapter(-1, selectedChapter)}
+              shape="default"
+              icon={<RightOutlined />}
+            >
+              Next chapter
+            </Button>
+            <Radio.Group>
+              <Radio.Button onClick={() => setPageSize(pageSize < 90 ? pageSize + 10 : 100)}  value="default"><ZoomInOutlined style={{ color: '#000957' }} /></Radio.Button>
+              <Radio.Button onClick={() => setPageSize(pageSize > 20 ? pageSize - 10 : 20)}  value="default"><ZoomOutOutlined style={{ color: '#000957' }} /></Radio.Button>
+            </Radio.Group>
+
           </Flex>
         }
       >
