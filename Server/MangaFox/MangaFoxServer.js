@@ -79,16 +79,16 @@ router.get('/mangas/search', async (req, res) => {
       // search-results
       $('ul.manga-list-4-list.line > li').each((index, element) => {
         const el = $(element)
-      
+
         const linkEl = el.find('a').first()
         const href = 'https://fanfox.net' + linkEl.attr('href')
         const title = linkEl.attr('title')
         const cover = el.find('img.manga-list-4-cover').attr('src')
-                  
+
         currentMangas.push({
           title,
           href,
-          cover,
+          cover
         })
       })
       if (currentMangas.length === 0) {
@@ -121,7 +121,7 @@ router.get('/mangas/detail', async (req, res) => {
   const { search } = req.query
 
   let cookies = ''
-  console.log('--- Server script detail started ---');
+  console.log('--- Server script detail started ---')
 
   try {
     const response = await axios.get(search, {

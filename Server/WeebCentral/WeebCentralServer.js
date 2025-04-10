@@ -118,7 +118,7 @@ router.get('/mangas/detail', async (req, res) => {
   const { search } = req.query
 
   let cookies = ''
-  console.log('--- Server script detail started ---');
+  console.log('--- Server script detail started ---')
 
   try {
     const response = await axios.get(search, {

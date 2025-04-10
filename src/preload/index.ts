@@ -8,7 +8,7 @@ const api = {
     ipcRenderer.invoke('toggle-bookmark', title, link, coverHref, provider),
   updateLatestRead: (title: string, link: string, latestRead: string | null) =>
     ipcRenderer.invoke('update-latest-read', title, link, latestRead),
-  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks'),
+  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

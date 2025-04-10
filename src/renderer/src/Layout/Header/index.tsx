@@ -8,20 +8,20 @@ import { getAllProviderSearchResults } from '@renderer/Features/Store/useSearchA
 const Header: React.FC = () => {
   const { searchTerm, setSearchTerm, setData, setIsFetching, clear } = useSearchStore()
 
-  const { refetch, isFetching } = useGetSearchWeebCentral(searchTerm)
+  const { isFetching } = useGetSearchWeebCentral(searchTerm)
   const navigate = useNavigate()
 
   const handleSearch = async () => {
     setSearchTerm(searchTerm)
     if (!searchTerm.trim()) return
-  
+
     navigate('/')
     setIsFetching(true)
     const results = await getAllProviderSearchResults(searchTerm)
     setData(results)
     setIsFetching(false)
   }
-  
+
   return (
     <HeaderContainer>
       <SearchBar

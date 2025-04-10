@@ -11,11 +11,11 @@ function App(): JSX.Element {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-      <ConfigProvider theme={theme}>
-        <ThemeProvider theme={styledTheme}>
-        <AppRoutes />
-        </ThemeProvider>
-      </ConfigProvider>
+        <ConfigProvider theme={theme}>
+          <ThemeProvider theme={styledTheme}>
+            <AppRoutes />
+          </ThemeProvider>
+        </ConfigProvider>
       </QueryClientProvider>
     </>
   )

@@ -1,12 +1,12 @@
 // components/CustomSpinner.tsx
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import { Spin } from 'antd';
+import React from 'react'
+import styled, { keyframes } from 'styled-components'
+import { Spin } from 'antd'
 
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-`;
+`
 
 // Custom spinner indicator, replace with your own SVG or styled div
 const SpinnerIndicator = styled.div`
@@ -16,7 +16,7 @@ const SpinnerIndicator = styled.div`
   border-top-color: #1890ff;
   border-radius: 50%;
   animation: ${spinAnimation} 1s linear infinite;
-`;
+`
 
 const SpinnerWrapper = styled.div<{ fullScreen?: boolean }>`
   display: flex;
@@ -33,21 +33,17 @@ const SpinnerWrapper = styled.div<{ fullScreen?: boolean }>`
     background: rgba(255, 255, 255, 0.8);
     z-index: 9999;
   `}
-`;
+`
 
 type CustomSpinnerProps = {
-  fullScreen?: boolean;
-  message?: string;
-};
+  fullScreen?: boolean
+  message?: string
+}
 
 const CustomSpinner: React.FC<CustomSpinnerProps> = ({ fullScreen, message }) => (
   <SpinnerWrapper fullScreen={fullScreen}>
-    <Spin
-      indicator={<SpinnerIndicator />}
-      tip={message}
-      size="large"
-    />
+    <Spin indicator={<SpinnerIndicator />} tip={message} size="large" />
   </SpinnerWrapper>
-);
+)
 
-export default CustomSpinner;
+export default CustomSpinner

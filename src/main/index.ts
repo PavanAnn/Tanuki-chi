@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { clearBookmarks, getBookmarks, handleBookmark, updateLatestRead } from './bookmarkStore'
-import { startExpressServer } from '../../Server/server'; // Adjust path as needed
+import { startExpressServer } from '../../Server/server' // Adjust path as needed
 
 function createWindow(): void {
   // Create the browser window.
@@ -19,7 +19,7 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: true,
       webSecurity: false,
-      devTools: true,
+      devTools: true
     }
   })
 
@@ -46,14 +46,27 @@ ipcMain.handle('get-bookmarks', () => {
   return getBookmarks()
 })
 
-ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHref: string, provider: string, latestRead?: string) => {
-  handleBookmark(title, link, coverHref, provider, latestRead)
-  return getBookmarks() // check again later
-})
+ipcMain.handle(
+  'toggle-bookmark',
+  (
+    _event,
+    title: string,
+    link: string,
+    coverHref: string,
+    provider: string,
+    latestRead?: string
+  ) => {
+    handleBookmark(title, link, coverHref, provider, latestRead)
+    return getBookmarks() // check again later
+  }
+)
 
-ipcMain.handle('update-latest-read', (_event, title: string, link: string, latestRead: string | null) => {
-  updateLatestRead(title, link, latestRead)
-})
+ipcMain.handle(
+  'update-latest-read',
+  (_event, title: string, link: string, latestRead: string | null) => {
+    updateLatestRead(title, link, latestRead)
+  }
+)
 
 ipcMain.handle('clear-bookmarks', () => {
   return clearBookmarks()

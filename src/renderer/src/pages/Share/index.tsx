@@ -76,7 +76,6 @@ export const SharePage: React.FC = () => {
           <Button icon={<UploadOutlined />}>Import Bookmarks</Button>
         </Upload>
         <Button onClick={() => console.log(bookmarks)}>Check</Button>
-
       </div>
     </>
   )

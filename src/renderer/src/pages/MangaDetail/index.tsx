@@ -1,119 +1,133 @@
-import { BookOutlined, LeftOutlined, RightOutlined, StarFilled, StarOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
-import { Button, Flex, Image, Radio } from 'antd';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailInfoContainer, DetailTitle } from './styles';
-import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles';
-import { CustomDrawer } from './Drawer';
-import { detailProviderMap } from '@renderer/Features/Store/Detail/useMangaDetailProvider';
+import {
+  BookOutlined,
+  LeftOutlined,
+  RightOutlined,
+  StarFilled,
+  StarOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined
+} from '@ant-design/icons'
+import { Button, Flex, Image, Radio } from 'antd'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import {
+  BookmarkContainer,
+  ChaptersContainer,
+  ChaptersListWrapper,
+  DetailInfoContainer,
+  DetailTitle
+} from './styles'
+import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles'
+import { CustomDrawer } from './Drawer'
+import { detailProviderMap } from '@renderer/Features/Store/Detail/useMangaDetailProvider'
 
 interface Chapters {
-  text: string;
-  href: string;
+  text: string
+  href: string
 }
 
 interface DetailManga {
-  author: string;
-  status: string;
-  latestChapter: string;
-  chapters: Chapters[];
-  coverHref: string;
+  author: string
+  status: string
+  latestChapter: string
+  chapters: Chapters[]
+  coverHref: string
 }
 
 interface Pages {
-  text: string;
-  href: string;
+  text: string
+  href: string
 }
 
 export const MangaDetail = () => {
-  const [searchParams] = useSearchParams();
-  const [open, setOpen] = useState(false);
-  const [selectedLink, setSelectedLink] = useState<string | null>(null);
-  const [selectedChapter, setSelectedChapter] = useState<string | null>(null);
-  const [bookmarked, setBookmarked] = useState(false);
-  const [latest, setLatest] = useState<string | undefined>();
-  const [pageSize, setPageSize] = useState(50);
+  const [searchParams] = useSearchParams()
+  const [open, setOpen] = useState(false)
+  const [selectedLink, setSelectedLink] = useState<string | null>(null)
+  const [selectedChapter, setSelectedChapter] = useState<string | null>(null)
+  const [bookmarked, setBookmarked] = useState(false)
+  const [latest, setLatest] = useState<string | undefined>()
+  const [pageSize, setPageSize] = useState(50)
 
-  const provider = searchParams.get('provider');
-  const link = searchParams.get('link');
-  const title = searchParams.get('title');
+  const provider = searchParams.get('provider')
+  const link = searchParams.get('link')
+  const title = searchParams.get('title')
 
-  const providerFns = provider ? detailProviderMap[provider] : null;
+  const providerFns = provider ? detailProviderMap[provider] : null
   if (!providerFns) {
-    return <div onClick={() => console.log(window.location.href)}>Invalid or missing provider</div>;
+    return <div onClick={() => console.log(window.location.href)}>Invalid or missing provider</div>
   }
 
-  const { useDetail, usePages, imageProxyPrefix } = providerFns;
+  const { useDetail, usePages, imageProxyPrefix } = providerFns
 
-  const { data, isFetching } = useDetail(link ?? '');
-  const { data: allPages } = usePages(selectedLink ?? '');
-  
+  const { data, isFetching } = useDetail(link ?? '')
+  const { data: allPages } = usePages(selectedLink ?? '')
+
   // Check if the manga is bookmarked
   useEffect(() => {
     const checkBookmarkDetails = async () => {
-      if (!title || !link || !provider) return;
-      const bookmarks = await window.api.getBookmarks();
-      const currentBookmark = bookmarks.find((b) => b.title === title && b.link === link);
-      setBookmarked(Boolean(currentBookmark));
+      if (!title || !link || !provider) return
+      const bookmarks = await window.api.getBookmarks()
+      const currentBookmark = bookmarks.find((b) => b.title === title && b.link === link)
+      setBookmarked(Boolean(currentBookmark))
       if (currentBookmark?.latestRead) {
-        setLatest(currentBookmark.latestRead);
+        setLatest(currentBookmark.latestRead)
       }
-    };
-    checkBookmarkDetails();
-  }, [title, link]);
+    }
+    checkBookmarkDetails()
+  }, [title, link])
 
   if (isFetching) {
-    return <div>loading</div>;
+    return <div>loading</div>
   }
 
   const showDrawer = (link: string, chapter: string) => {
-    setSelectedChapter(chapter);
-    setSelectedLink(link);
-    setOpen(true);
-  };
+    setSelectedChapter(chapter)
+    setSelectedLink(link)
+    setOpen(true)
+  }
 
   const onClose = (chapter: string | null) => {
-    if (!chapter) return;
-    handleLatestRead(chapter)
-    setOpen(false);
-    setSelectedLink(null);
-  };
+    if (!chapter) return
+    if (!bookmarked) handleLatestRead(chapter)
+    setOpen(false)
+    setSelectedLink(null)
+  }
 
-  const res: DetailManga = data?.response.data;
-  const pages: Pages[] = allPages?.response.data.pages ?? [];
+  const res: DetailManga = data?.response.data
+  const pages: Pages[] = allPages?.response.data.pages ?? []
 
   // Toggle bookmark
   const handleBookmarkClick = async () => {
     if (title && link && provider) {
-      const updatedBookmarks = await window.api.toggleBookmark(title, link, res.coverHref, provider);
-      const isBookmarked = updatedBookmarks.some((b) => b.title === title && b.link === link);
-      setBookmarked(isBookmarked);
+      const updatedBookmarks = await window.api.toggleBookmark(title, link, res.coverHref, provider)
+      const isBookmarked = updatedBookmarks.some((b) => b.title === title && b.link === link)
+      setBookmarked(isBookmarked)
     }
-  };
+  }
 
   // Update latest read chapter
   const handleLatestRead = async (chapter: string) => {
-    if (!title || !link) return;
-    const newLatest = latest === chapter ? undefined : chapter;
-    await window.api.updateLatestRead(title, link, newLatest ?? null);
-    setLatest(newLatest);
-  };
+    if (!title || !link) return
+    const newLatest = latest === chapter ? undefined : chapter
+    await window.api.updateLatestRead(title, link, newLatest ?? null)
+    setLatest(newLatest)
+  }
 
   const handleNextChapter = (link: string, chapter: string) => {
-    setSelectedChapter(chapter);
-    setSelectedLink(link);
+    setSelectedChapter(chapter)
+    setSelectedLink(link)
   }
 
-  const chapterIndex = res.chapters.findIndex(ch => ch.text === selectedChapter);
+  const chapterIndex = res.chapters.findIndex((ch) => ch.text === selectedChapter)
 
-const changeChapter = (offset: number, chapter: string | null) => {
-  if (chapter) handleLatestRead(chapter);
-  
-  const target = res.chapters[chapterIndex + offset];
-  if (target) {
-    handleNextChapter(target.href, target.text);
+  const changeChapter = (offset: number, chapter: string | null) => {
+    if (chapter) handleLatestRead(chapter)
+
+    const target = res.chapters[chapterIndex + offset]
+    if (target) {
+      handleNextChapter(target.href, target.text)
+    }
   }
-};
 
   return (
     <div>
@@ -124,9 +138,15 @@ const changeChapter = (offset: number, chapter: string | null) => {
             {title}
             <BookmarkContainer>
               {bookmarked ? (
-                <StarFilled onClick={handleBookmarkClick} style={{ fontSize: '22px', color: '#FFFF00' }} />
+                <StarFilled
+                  onClick={handleBookmarkClick}
+                  style={{ fontSize: '22px', color: '#FFFF00' }}
+                />
               ) : (
-                <StarOutlined onClick={handleBookmarkClick} style={{ fontSize: '22px', color: '#FFFFFF' }} />
+                <StarOutlined
+                  onClick={handleBookmarkClick}
+                  style={{ fontSize: '22px', color: '#FFFFFF' }}
+                />
               )}
             </BookmarkContainer>
           </DetailTitle>
@@ -151,17 +171,19 @@ const changeChapter = (offset: number, chapter: string | null) => {
             </div>
             <BookOutlined
               onClick={() => {
-                handleLatestRead(element.text);
+                handleLatestRead(element.text)
               }}
               style={{ cursor: 'pointer', color: element.text === latest ? '#FFFF00' : '#433D8B' }}
             />
           </ChaptersContainer>
         ))}
       </ChaptersListWrapper>
-      
+
       <CustomDrawer
         open={open}
-        onClose={() => {onClose(selectedChapter)}}
+        onClose={() => {
+          onClose(selectedChapter)
+        }}
         chapter={selectedChapter}
         title={`${title}  -  ${selectedChapter}`}
         width="90%"
@@ -185,10 +207,19 @@ const changeChapter = (offset: number, chapter: string | null) => {
               Next chapter
             </Button>
             <Radio.Group>
-              <Radio.Button onClick={() => setPageSize(pageSize < 90 ? pageSize + 10 : 100)}  value="default"><ZoomInOutlined style={{ color: '#000957' }} /></Radio.Button>
-              <Radio.Button onClick={() => setPageSize(pageSize > 20 ? pageSize - 10 : 20)}  value="default"><ZoomOutOutlined style={{ color: '#000957' }} /></Radio.Button>
+              <Radio.Button
+                onClick={() => setPageSize(pageSize < 90 ? pageSize + 10 : 100)}
+                value="default"
+              >
+                <ZoomInOutlined style={{ color: '#000957' }} />
+              </Radio.Button>
+              <Radio.Button
+                onClick={() => setPageSize(pageSize > 20 ? pageSize - 10 : 20)}
+                value="default"
+              >
+                <ZoomOutOutlined style={{ color: '#000957' }} />
+              </Radio.Button>
             </Radio.Group>
-
           </Flex>
         }
       >
@@ -214,5 +245,5 @@ const changeChapter = (offset: number, chapter: string | null) => {
         </Flex>
       </CustomDrawer>
     </div>
-  );
-};
+  )
+}
