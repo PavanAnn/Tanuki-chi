@@ -1,6 +1,7 @@
 // server.js
 import express from 'express';
 import weebCentralRoutes from './WeebCentral/WeebCentralServer.js';
+import mangaFoxRouter from './MangaFox/MangaFoxServer.js';
 
 export function startExpressServer() {
   const app = express();
@@ -10,6 +11,8 @@ export function startExpressServer() {
 
   // Use the WeebCentral routes with a base path
   app.use('/api/weebcentral', weebCentralRoutes);
+  app.use('/api/mangafox', mangaFoxRouter);
+
 
   // Default route
   app.get('/', (req, res) => {

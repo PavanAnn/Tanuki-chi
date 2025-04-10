@@ -86,6 +86,15 @@ code {
   font-weight: 700;
 }
 
+.icon-hover-delete {
+  transition: color 0.3s ease;
+}
+
+.icon-hover-delete:hover {
+  color: red;
+}
+
+
 .actions {
   display: flex;
   padding-top: 32px;

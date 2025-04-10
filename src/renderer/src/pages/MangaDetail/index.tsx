@@ -1,14 +1,11 @@
 import { BookOutlined, LeftOutlined, RightOutlined, StarFilled, StarOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
-import {
-  useGetDetailMangasWeebCentral,
-  useGetMangasPagesWeebCentral
-} from '@renderer/Features/Fetchers/WeebCentral/Hooks';
 import { Button, Flex, Image, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailInfoContainer, DetailTitle } from './styles';
 import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles';
 import { CustomDrawer } from './Drawer';
+import { detailProviderMap } from '@renderer/Features/Store/Detail/useMangaDetailProvider';
 
 interface Chapters {
   text: string;
@@ -36,16 +33,25 @@ export const MangaDetail = () => {
   const [bookmarked, setBookmarked] = useState(false);
   const [latest, setLatest] = useState<string | undefined>();
   const [pageSize, setPageSize] = useState(50);
+
+  const provider = searchParams.get('provider');
   const link = searchParams.get('link');
   const title = searchParams.get('title');
 
-  const { data, isFetching } = useGetDetailMangasWeebCentral(link ?? '');
-  const { data: allPages } = useGetMangasPagesWeebCentral(selectedLink ?? '');
+  const providerFns = provider ? detailProviderMap[provider] : null;
+  if (!providerFns) {
+    return <div onClick={() => console.log(window.location.href)}>Invalid or missing provider</div>;
+  }
 
+  const { useDetail, usePages, imageProxyPrefix } = providerFns;
+
+  const { data, isFetching } = useDetail(link ?? '');
+  const { data: allPages } = usePages(selectedLink ?? '');
+  
   // Check if the manga is bookmarked
   useEffect(() => {
     const checkBookmarkDetails = async () => {
-      if (!title || !link) return;
+      if (!title || !link || !provider) return;
       const bookmarks = await window.api.getBookmarks();
       const currentBookmark = bookmarks.find((b) => b.title === title && b.link === link);
       setBookmarked(Boolean(currentBookmark));
@@ -66,7 +72,9 @@ export const MangaDetail = () => {
     setOpen(true);
   };
 
-  const onClose = () => {
+  const onClose = (chapter: string | null) => {
+    if (!chapter) return;
+    handleLatestRead(chapter)
     setOpen(false);
     setSelectedLink(null);
   };
@@ -76,8 +84,8 @@ export const MangaDetail = () => {
 
   // Toggle bookmark
   const handleBookmarkClick = async () => {
-    if (title && link) {
-      const updatedBookmarks = await window.api.toggleBookmark(title, link, res.coverHref);
+    if (title && link && provider) {
+      const updatedBookmarks = await window.api.toggleBookmark(title, link, res.coverHref, provider);
       const isBookmarked = updatedBookmarks.some((b) => b.title === title && b.link === link);
       setBookmarked(isBookmarked);
     }
@@ -153,7 +161,8 @@ const changeChapter = (offset: number, chapter: string | null) => {
       
       <CustomDrawer
         open={open}
-        onClose={onClose}
+        onClose={() => {onClose(selectedChapter)}}
+        chapter={selectedChapter}
         title={`${title}  -  ${selectedChapter}`}
         width="90%"
         extra={
@@ -197,9 +206,7 @@ const changeChapter = (offset: number, chapter: string | null) => {
             >
               <Image
                 width="100%"
-                src={`http://127.0.0.1:3000/api/weebcentral/mangas/image-proxy?url=${encodeURIComponent(
-                  element.href
-                )}`}
+                src={`http://127.0.0.1:3000/api/${imageProxyPrefix}/mangas/image-proxy?url=${encodeURIComponent(element.href)}`}
                 preview={false}
               />
             </Flex>

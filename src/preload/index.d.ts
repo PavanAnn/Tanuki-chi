@@ -1,16 +1,17 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 
 export interface IElectronAPI {
-  getBookmarks: () => Promise<{ title: string; link: string; coverHref: string; latestRead?: string }[]>
+  getBookmarks: () => Promise<{ title: string; link: string; coverHref: string; provider: string; latestRead?: string }[]>
   toggleBookmark: (
     title: string,
     link: string,
-    coverHref: string
-  ) => Promise<{ title: string; link: string; coverHref: string }[]>
+    coverHref: string,
+    provider: string,
+  ) => Promise<{ title: string; link: string; coverHref: string; provider: string; }[]>
   updateLatestRead: (
     title: string,
     link: string,
-    latestRead: string | null
+    latestRead: string | null,
   ) => Promise<{ title: string; link: string; latestRead: string }[]>
 
   clearBookmarks: () => Promise<[]>

@@ -46,8 +46,8 @@ ipcMain.handle('get-bookmarks', () => {
   return getBookmarks()
 })
 
-ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHref: string, latestRead?: string) => {
-  handleBookmark(title, link, coverHref, latestRead)
+ipcMain.handle('toggle-bookmark', (_event, title: string, link: string, coverHref: string, provider: string, latestRead?: string) => {
+  handleBookmark(title, link, coverHref, provider, latestRead)
   return getBookmarks() // check again later
 })
 

@@ -3,10 +3,11 @@ import styled, { keyframes } from 'styled-components';
 
 interface CustomDrawerProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (chapter: string | null) => void;
   title?: string;
   extra?: ReactNode;
-  width?: string; // e.g. '90%' or any valid CSS width value
+  width?: string;
+  chapter: string | null;
   children: ReactNode;
 }
 
@@ -74,13 +75,14 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
   extra,
   children,
   width = '90%',
+  chapter
 }) => {
 
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (open) {
-          setIsVisible(true);
+          return setIsVisible(true);
         } else {
           const timer = setTimeout(() => setIsVisible(false), 300);
           return () => clearTimeout(timer);
@@ -91,13 +93,13 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
 
   return (
     <>
-      <DrawerOverlay open={open} onClick={onClose} />
+      <DrawerOverlay open={open} onClick={() => {onClose(chapter)}} />
       <DrawerContainer open={open} width={width}>
         <DrawerHeader>
           <div style={{ color: 'black' }}>{title}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {extra}
-            <CloseButton style={{ color: '#000957' }} onClick={onClose}>&times;</CloseButton>
+            <CloseButton style={{ color: '#000957' }} onClick={() => {onClose(chapter)}}>&times;</CloseButton>
           </div>
         </DrawerHeader>
         <DrawerBody>{children}</DrawerBody>

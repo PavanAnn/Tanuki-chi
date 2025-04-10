@@ -6,6 +6,7 @@ interface Bookmark {
   link: string
   coverHref: string
   latestRead: string;
+  provider: string;
 }
 
 const store: any = new Store<{ bookmarks: Bookmark[] }>({
@@ -20,25 +21,29 @@ export const handleBookmark = (
   title: string,
   link: string,
   coverHref: string,
-  latestRead?: string
+  provider: string,
+  latestRead?: string,
 ): void => {
   const bookmarks = getBookmarks()
-  const isBookmarked = bookmarks.some((b) => b.title === title && b.link === link)
-
+  const isBookmarked = bookmarks.some(
+    (b) => b.title === title && b.link === link && b.provider === provider
+  );
+  
   if (isBookmarked) {
     store.set(
       'bookmarks',
-      bookmarks.filter((b) => !(b.title === title && b.link === link))
-    )
+      bookmarks.filter((b) => !(b.title === title && b.link === link && b.provider === provider))
+    );
   } else {
     const newBookmark = {
       title,
       link,
       coverHref,
+      provider,
       ...(latestRead && { latestRead })
-    }
-
-    store.set('bookmarks', [...bookmarks, newBookmark])
+    };
+  
+    store.set('bookmarks', [...bookmarks, newBookmark]);
   }
 }
 

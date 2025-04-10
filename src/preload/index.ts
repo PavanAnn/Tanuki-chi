@@ -4,8 +4,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   getBookmarks: () => ipcRenderer.invoke('get-bookmarks'),
-  toggleBookmark: (title: string, link: string, coverHref: string) =>
-    ipcRenderer.invoke('toggle-bookmark', title, link, coverHref),
+  toggleBookmark: (title: string, link: string, coverHref: string, provider: string) =>
+    ipcRenderer.invoke('toggle-bookmark', title, link, coverHref, provider),
   updateLatestRead: (title: string, link: string, latestRead: string | null) =>
     ipcRenderer.invoke('update-latest-read', title, link, latestRead),
   clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks'),
