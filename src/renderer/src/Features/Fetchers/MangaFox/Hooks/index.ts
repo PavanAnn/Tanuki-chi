@@ -37,3 +37,13 @@ export function useGetMangasPagesMangaFox(search?: string) {
     enabled: !!search
   })
 }
+
+export function useGetLatestChapterMangaFox(search?: string) {
+  return useQuery({
+    queryKey: ['mangafoxlatest', search],
+    queryFn: async () => {
+      return getMangasPagesMangaFox(search!)
+    },
+    enabled: !!search
+  })
+}

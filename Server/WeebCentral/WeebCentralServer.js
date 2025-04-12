@@ -240,9 +240,41 @@ router.get('/mangas/image-proxy', async (req, res) => {
     res.set('Content-Type', response.headers['content-type'])
     res.send(response.data)
   } catch (error) {
-    console.error('Image proxy error:', error.message)
-    res.status(500).json({ error: 'Failed to fetch image' })
+    console.error('Image proxy error:', error.message, url)
+    res.status(500).json({ error: `Failed to fetch image ${url}` })
   }
 })
+
+router.get('/mangas/latest', async (req, res) => {
+  const { search } = req.query
+
+  try {
+    // Original page request
+    const response = await axios.get(search, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+        Accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
+      }
+    })
+
+    const $ = cheerio.load(response.data)
+    const latestChapter = $('#chapter-list .flex a')
+      .first()
+      .find('span')
+      .eq(1)
+      .find('span')
+      .eq(0)
+      .text()
+      .trim()
+
+    res.json({ latestChapter })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Failed to fetch latest chapter' })
+  }
+})
+
 
 export default router

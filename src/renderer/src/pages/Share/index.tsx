@@ -1,6 +1,7 @@
 import { Button, Upload, message } from 'antd'
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
+import { mapBookmarks } from '../utils'
 
 export const SharePage: React.FC = () => {
   const [bookmarks, setBookmarks] = useState<any[]>([])
@@ -8,14 +9,7 @@ export const SharePage: React.FC = () => {
   useEffect(() => {
     const fetchBookmarks = async () => {
       const savedBookmarks = await window.api.getBookmarks()
-      const mappedBookmarks = savedBookmarks.map((item: any) => ({
-        title: item.title,
-        link: item.link,
-        cover: item.coverHref,
-        provider: item.provider,
-        latestRead: item.latestRead
-      }))
-      setBookmarks(mappedBookmarks)
+      setBookmarks(mapBookmarks(savedBookmarks))
     }
 
     fetchBookmarks()
@@ -42,12 +36,18 @@ export const SharePage: React.FC = () => {
         const imported = JSON.parse(e.target?.result as string)
         if (!Array.isArray(imported)) throw new Error('Invalid format')
 
-        // Optionally: toggleBookmark for each
         for (const item of imported) {
-          await window.api.toggleBookmark(item.title, item.link, item.cover, 'weebcentral')
+          await window.api.toggleBookmark(
+            item.title,
+            item.link,
+            item.cover,
+            item.provider,
+            item.latestRead,
+            item.latestChapter
+          )
         }
 
-        setBookmarks(imported)
+        setBookmarks(mapBookmarks(imported))
         message.success('Bookmarks imported successfully')
       } catch (err) {
         message.error('Invalid JSON file')
@@ -75,7 +75,7 @@ export const SharePage: React.FC = () => {
         >
           <Button icon={<UploadOutlined />}>Import Bookmarks</Button>
         </Upload>
-        <Button onClick={() => console.log(bookmarks)}>Check</Button>
+        <Button onClick={() => window.api.clearBookmarks()}>Clear bookmarks</Button>
       </div>
     </>
   )

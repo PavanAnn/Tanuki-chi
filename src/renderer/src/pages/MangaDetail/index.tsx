@@ -88,7 +88,7 @@ export const MangaDetail = () => {
 
   const onClose = (chapter: string | null) => {
     if (!chapter) return
-    if (!bookmarked) handleLatestRead(chapter)
+    if (latest !== chapter) handleLatestRead(chapter)
     setOpen(false)
     setSelectedLink(null)
   }

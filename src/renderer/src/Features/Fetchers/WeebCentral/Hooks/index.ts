@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import {
   getSearchMangasWeebCentral,
   getDetailMangasWeebCentral,
-  getMangasPagesWeebCentral
+  getMangasPagesWeebCentral,
+  getLatestChapterWeebCentral
 } from '../Requests/WeebCentralAPI'
 
 /* export function useGetWeebCentral(page: number) {
@@ -44,5 +45,14 @@ export function useGetMangasPagesWeebCentral(search?: string) {
       return getMangasPagesWeebCentral(search!)
     },
     enabled: !!search
+  })
+}
+
+export function useGetLatestChapterWeebCentral(search?: string) {
+  return useQuery({
+    queryKey: ['weebcentrallatest', search],
+    queryFn: async () => {
+      return getLatestChapterWeebCentral(search!)
+    },
   })
 }

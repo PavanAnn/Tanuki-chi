@@ -9,6 +9,7 @@ interface Bookmark {
   provider: string
   createdAt: string
   updatedAt: string
+  latestChapter: string
 }
 
 const store: any = new Store<{ bookmarks: Bookmark[] }>({
@@ -24,7 +25,8 @@ export const handleBookmark = (
   link: string,
   coverHref: string,
   provider: string,
-  latestRead?: string
+  latestRead?: string,
+  latestChapter?: string
 ): void => {
   const now = new Date().toISOString()
   const bookmarks = getBookmarks()
@@ -46,6 +48,7 @@ export const handleBookmark = (
       provider,
       createdAt: now,
       updatedAt: now,
+      latestChapter: latestChapter ?? '',
       ...(latestRead && { latestRead })
     }
 
@@ -69,6 +72,29 @@ export const updateLatestRead = (title: string, link: string, latestRead: string
 
   store.set('bookmarks', updated)
 }
+
+export const updateLatestChapterForBookmark = (
+  title: string,
+  link: string,
+  provider: string,
+  latestChapter: string
+): void => {
+  const now = new Date().toISOString()
+  const bookmarks = getBookmarks()
+
+  const updated = bookmarks.map((b) =>
+    b.title === title && b.link === link && b.provider === provider
+      ? {
+          ...b,
+          latestChapter,
+          updatedAt: now
+        }
+      : b
+  )
+
+  store.set('bookmarks', updated)
+}
+
 
 export const clearBookmarks = () => {
   store.set('bookmarks', [])

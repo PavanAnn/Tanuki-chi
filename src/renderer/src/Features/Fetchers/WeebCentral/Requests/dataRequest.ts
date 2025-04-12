@@ -49,8 +49,21 @@ function getMangasPagesWeebCentral() {
   }
 }
 
+function getLatestChapterWeebCentral() {
+  return async (search) => {
+    const response = await axios.get(
+      `http://127.0.0.1:3000/api/weebcentral/mangas/latest?search=${search}`
+    )
+
+    return {
+      response
+    }
+  }
+}
+
 export const WeebCentralAPI = {
   getSearchMangasWeebCentral,
   getDetailMangasWeebCentral,
-  getMangasPagesWeebCentral
+  getMangasPagesWeebCentral,
+  getLatestChapterWeebCentral
 }
