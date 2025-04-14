@@ -1,4 +1,4 @@
-import { Button, Upload, message } from 'antd'
+import { Button, Modal, Upload, message } from 'antd'
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import { mapBookmarks } from '../utils'
@@ -75,7 +75,25 @@ export const SharePage: React.FC = () => {
         >
           <Button icon={<UploadOutlined />}>Import Bookmarks</Button>
         </Upload>
-        <Button onClick={() => window.api.clearBookmarks()}>Clear bookmarks</Button>
+        <Button
+  danger
+  onClick={() => {
+    Modal.confirm({
+      title: 'Are you sure?',
+      content: 'This will delete all your bookmarks. Consider exporting them before.',
+      okText: 'Yes, delete all',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        await window.api.clearBookmarks()
+        setBookmarks([])
+        message.success('All bookmarks cleared.')
+      },
+    })
+  }}
+>
+  Clear bookmarks
+</Button>
       </div>
     </>
   )

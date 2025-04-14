@@ -11,6 +11,5 @@ export const HeaderContainer = styled(Flex)`
   color: white;
   display: flex;
   flex-direction: row;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   border: 1px solid ${({ theme }) => theme.colors.bg};
 `

@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
           Tanuki-chi
         </Flex>
       </Flex>
-      <Divider style={{ margin: '0px' }} />
+      <Divider style={{ margin: '-10% 0px 0px 0px' }} />
       <Flex vertical gap={'12px'} style={{ marginTop: '20px' }}>
         <SidebarSection className={isActive('/') ? 'active' : ''}>
           <Link to="/">Search</Link>
