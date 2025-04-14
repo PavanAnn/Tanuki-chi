@@ -132,7 +132,11 @@ export const MangaDetail = () => {
   return (
     <div>
       <div style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}>
-        <Image width={200} src={res.coverHref} preview={true} />
+        <Image
+          width={200}
+          src={`http://127.0.0.1:3000/api/${imageProxyPrefix}/mangas/image-proxy?url=${encodeURIComponent(res.coverHref)}`}
+          preview={true}
+        />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <DetailTitle>
             {title}

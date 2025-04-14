@@ -95,7 +95,6 @@ export const updateLatestChapterForBookmark = (
   store.set('bookmarks', updated)
 }
 
-
 export const clearBookmarks = () => {
   store.set('bookmarks', [])
 }

@@ -1,6 +1,6 @@
 {
   "name": "tanuki-chi",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Custom manga reader",
   "main": "./out/main/index.js",
   "author": "Pavan",

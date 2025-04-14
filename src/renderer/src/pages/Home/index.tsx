@@ -33,40 +33,54 @@ const Home: React.FC = () => {
     <HomeContainer>
       <MangaGrid>
         {Array.isArray(data) && data.length > 0 ? (
-          <Flex vertical gap="large">
-            <h1>Search results grouped by providers:</h1>
+          data.every((providerEntry) => {
+            const providerName = Object.keys(providerEntry)[0]
+            const mangas = providerEntry[providerName]
+            return mangas.length === 0
+          }) ? (
+            <div style={{ textAlign: 'center', marginTop: '40px' }}>
+              <h2>No results found for this search</h2>
+              <p>Try a different manga title.</p>
+            </div>
+          ) : (
+            <Flex vertical gap="large">
+              <h1>Search results:</h1>
+              {data.map((providerEntry) => {
+                const providerName = Object.keys(providerEntry)[0]
+                const mangas = providerEntry[providerName]
 
-            {data.map((providerEntry) => {
-              const providerName = Object.keys(providerEntry)[0]
-              const mangas = providerEntry[providerName]
-
-              return (
-                <div key={providerName}>
-                  <h2 style={{ textTransform: 'capitalize' }}>{providerName}</h2>
-                  <Flex gap="large" wrap style={{ marginBottom: 32 }}>
-                    {mangas.map((manga: any) => (
-                      <Card
-                        size="small"
-                        key={manga.id || manga.href}
-                        title={manga.title}
-                        onClick={() => handleClick(providerName, manga.href, manga.title)}
-                        style={{ width: '15%', cursor: 'pointer' }}
-                      >
-                        <Image
-                          preview={false}
-                          loading="lazy"
-                          src={`http://127.0.0.1:3000/api/${providerName}/mangas/image-proxy?url=${encodeURIComponent(
-                            manga.cover
-                          )}`}
-                          fallback="/fallback.jpg"
-                        />
-                      </Card>
-                    ))}
-                  </Flex>
-                </div>
-              )
-            })}
-          </Flex>
+                return (
+                  <div key={providerName}>
+                    {mangas.length > 0 && (
+                      <>
+                        <h2 style={{ textTransform: 'capitalize' }}>{providerName}</h2>
+                        <Flex gap="large" wrap style={{ marginBottom: 32 }}>
+                          {mangas.map((manga: any) => (
+                            <Card
+                              size="small"
+                              key={manga.id || manga.href}
+                              title={manga.title}
+                              onClick={() => handleClick(providerName, manga.href, manga.title)}
+                              style={{ width: '15%', cursor: 'pointer' }}
+                            >
+                              <Image
+                                preview={false}
+                                loading="lazy"
+                                src={`http://127.0.0.1:3000/api/${providerName}/mangas/image-proxy?url=${encodeURIComponent(
+                                  manga.cover
+                                )}`}
+                                fallback="/fallback.jpg"
+                              />
+                            </Card>
+                          ))}
+                        </Flex>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </Flex>
+          )
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <h1>Welcome to the Home Page</h1>

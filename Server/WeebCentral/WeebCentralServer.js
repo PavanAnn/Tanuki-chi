@@ -276,5 +276,4 @@ router.get('/mangas/latest', async (req, res) => {
   }
 })
 
-
 export default router

@@ -1,9 +1,15 @@
-import {
-  getLatestChapterWeebCentral
-} from '@renderer/Features/Fetchers/WeebCentral/Requests/WeebCentralAPI'
+import { getLatestChapterWeebCentral } from '@renderer/Features/Fetchers/WeebCentral/Requests/WeebCentralAPI'
 
-import { useGetDetailMangasMangaFox, useGetMangasPagesMangaFox, useGetLatestChapterMangaFox } from '@renderer/Features/Fetchers/MangaFox/Hooks'
-import { useGetDetailMangasWeebCentral, useGetMangasPagesWeebCentral, useGetLatestChapterWeebCentral } from '@renderer/Features/Fetchers/WeebCentral/Hooks'
+import {
+  useGetDetailMangasMangaFox,
+  useGetMangasPagesMangaFox,
+  useGetLatestChapterMangaFox
+} from '@renderer/Features/Fetchers/MangaFox/Hooks'
+import {
+  useGetDetailMangasWeebCentral,
+  useGetMangasPagesWeebCentral,
+  useGetLatestChapterWeebCentral
+} from '@renderer/Features/Fetchers/WeebCentral/Hooks'
 
 export const detailProviderMap = {
   weebcentral: {

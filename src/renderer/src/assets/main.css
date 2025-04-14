@@ -5,6 +5,7 @@ body {
   overflow: hidden;
   background-size: cover;
   user-select: none;
+  color: #1d4ed8;
 }
 
 code {

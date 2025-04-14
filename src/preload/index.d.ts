@@ -21,38 +21,44 @@ export interface IElectronAPI {
     provider: string,
     latestRead?: string,
     latestChapter?: string
-  ) => Promise<{
-    title: string
-    link: string
-    coverHref: string
-    provider: string
-    latestRead?: string
-    latestChapter: string
-    createdAt: string
-    updatedAt: string
-  }[]>
+  ) => Promise<
+    {
+      title: string
+      link: string
+      coverHref: string
+      provider: string
+      latestRead?: string
+      latestChapter: string
+      createdAt: string
+      updatedAt: string
+    }[]
+  >
 
   updateLatestRead: (
     title: string,
     link: string,
     latestRead: string | null
-  ) => Promise<{
-    title: string
-    link: string
-    latestRead?: string
-  }[]>
+  ) => Promise<
+    {
+      title: string
+      link: string
+      latestRead?: string
+    }[]
+  >
 
   updateLatestChapter: (
     title: string,
     link: string,
     provider: string,
     latestChapter: string
-  ) => Promise<{
-    title: string
-    link: string
-    provider: string
-    latestChapter: string
-  }[]>
+  ) => Promise<
+    {
+      title: string
+      link: string
+      provider: string
+      latestChapter: string
+    }[]
+  >
 
   clearBookmarks: () => Promise<[]>
 }

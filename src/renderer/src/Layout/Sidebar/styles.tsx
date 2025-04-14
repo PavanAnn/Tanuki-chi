@@ -2,21 +2,43 @@ import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 import { Flex } from 'antd'
 
+// SidebarContainer.ts
 export const SidebarContainer = styled(Flex)`
-  width: 10%;
+  flex-direction: column;
+  width: 12%; // Fixed width for consistency
+  min-width: 200px;
   height: 100vh;
-  background-color: ${({ theme }) => theme.colors.secondary};
-  color: white;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  border: 1px solid ${({ theme }) => theme.colors.bg};
+  background-color: ${({ theme }) => theme.colors.sidebarBg || '#ffffff'};
+  color: ${({ theme }) => theme.colors.sidebarText || '#4A4A4A'};
+  padding: 0px 12px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  gap: 16px;
 `
-export const SidebarSection = styled.div`
-  height: 6vh;
-  text-align: center;
+
+// SidebarSection.ts
+export const SidebarSection = styled(Flex)`
+  height: 40px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.bg};
+  justify-content: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.sidebarText || '#4A4A4A'};
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.hover || '#f5f5f5'};
+  }
+
+  &.active {
+    background-color: ${({ theme }) => theme.colors.active || '#e0e7ff'};
+    color: ${({ theme }) => theme.colors.activeText || '#1d4ed8'};
+    font-weight: 600;
+  }
 `
 
 export const SidebarHeader = styled.h1`
@@ -25,7 +47,6 @@ export const SidebarHeader = styled.h1`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.bg};
 `
 
 export const SidebarInput = styled.input`

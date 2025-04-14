@@ -2,7 +2,13 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { clearBookmarks, getBookmarks, handleBookmark, updateLatestChapterForBookmark, updateLatestRead } from './bookmarkStore'
+import {
+  clearBookmarks,
+  getBookmarks,
+  handleBookmark,
+  updateLatestChapterForBookmark,
+  updateLatestRead
+} from './bookmarkStore'
 import { startExpressServer } from '../../Server/server' // Adjust path as needed
 
 function createWindow(): void {
@@ -64,18 +70,11 @@ ipcMain.handle(
 
 ipcMain.handle(
   'update-latest-chapter',
-  (
-    _event,
-    title: string,
-    link: string,
-    provider: string,
-    latestChapter: string
-  ) => {
+  (_event, title: string, link: string, provider: string, latestChapter: string) => {
     updateLatestChapterForBookmark(title, link, provider, latestChapter)
     return getBookmarks()
   }
 )
-
 
 ipcMain.handle(
   'update-latest-read',

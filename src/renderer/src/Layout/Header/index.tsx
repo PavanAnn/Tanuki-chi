@@ -1,37 +1,39 @@
 import React from 'react'
-import { HeaderContainer, SearchBar } from './styles'
+import { HeaderContainer } from './styles'
 import { useSearchStore } from '../../Features/Store/Search/useSearchStore'
-import { useGetSearchWeebCentral } from '@renderer/Features/Fetchers/WeebCentral/Hooks'
 import { useNavigate } from 'react-router-dom'
 import { getAllProviderSearchResults } from '@renderer/Features/Store/useSearchAllProviders'
+import Search from 'antd/es/input/Search'
 
 const Header: React.FC = () => {
-  const { searchTerm, setSearchTerm, setData, setIsFetching, clear } = useSearchStore()
+  const { setSearchTerm, setData, setIsFetching, clear, isFetching } = useSearchStore()
 
-  const { isFetching } = useGetSearchWeebCentral(searchTerm)
   const navigate = useNavigate()
 
-  const handleSearch = async () => {
-    setSearchTerm(searchTerm)
-    if (!searchTerm.trim()) return
+  const handleSearch = async (value: string) => {
+    const trimmed = value.trim()
+    setSearchTerm(trimmed)
+    if (!trimmed) return
 
     navigate('/')
     setIsFetching(true)
-    const results = await getAllProviderSearchResults(searchTerm)
+    const results = await getAllProviderSearchResults(trimmed)
     setData(results)
     setIsFetching(false)
   }
 
   return (
-    <HeaderContainer>
-      <SearchBar
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search for manga..."
+    <HeaderContainer gap={'12px'} align="center">
+      <Search
+        style={{ width: '80%', marginLeft: '20px' }}
+        onSearch={handleSearch}
+        onClear={() => clear()}
+        placeholder="Search for mangas"
+        enterButton="Search"
+        size="large"
+        loading={isFetching}
+        allowClear
       />
-      <button onClick={handleSearch}>{isFetching ? 'Searching' : 'Search'}</button>
-      <button onClick={() => clear()}>clear</button>
     </HeaderContainer>
   )
 }

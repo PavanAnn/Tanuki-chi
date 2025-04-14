@@ -53,6 +53,6 @@ export function useGetLatestChapterWeebCentral(search?: string) {
     queryKey: ['weebcentrallatest', search],
     queryFn: async () => {
       return getLatestChapterWeebCentral(search!)
-    },
+    }
   })
 }

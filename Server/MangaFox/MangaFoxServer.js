@@ -120,9 +120,6 @@ router.get('/mangas/search', async (req, res) => {
 router.get('/mangas/detail', async (req, res) => {
   const { search } = req.query
 
-  let cookies = ''
-  console.log('--- Server script detail started ---')
-
   try {
     const response = await axios.get(search, {
       headers: {
@@ -133,52 +130,38 @@ router.get('/mangas/detail', async (req, res) => {
       }
     })
 
-    const fullChapterListUrl = search.replace(/\/[^\/]+$/, '/full-chapter-list')
+    const $ = cheerio.load(response.data)
 
-    // Get the doc with all the chapters
-    const responseAllMangas = await axios.get(fullChapterListUrl, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
-      }
-    })
+    const author = $('.detail-info-right-say').text().replace('Author:', '').trim()
 
-    let html = response.data
-    let $ = cheerio.load(html)
+    const status = $('.detail-info-right-title-tip').text().trim()
 
-    const author = $('li:has(strong:contains("Author(s):")) a').text().trim()
+    const coverHref = $('.detail-info-cover-img').attr('src')
 
-    const status = $('li:has(strong:contains("Status:")) a').text().trim()
     const chapters = []
-    const latestChapter = $('#chapter-list .flex a')
-      .first()
-      .find('span')
-      .eq(1)
-      .find('span')
-      .eq(0)
-      .text()
-    const coverHref = $('picture').first().find('img').attr('src')
 
-    html = responseAllMangas.data
-    $ = cheerio.load(html)
+    $('#chapterlist ul.detail-main-list li').each((index, element) => {
+      const anchor = $(element).find('a')
+      const href = anchor.attr('href')
+      const text = anchor.find('.title3').text().trim()
+      const date = anchor.find('.title2').text().trim()
 
-    // Scrap all chapters and its href
-    $('div.flex.items-center').each((index, element) => {
-      const text = $(element).find('a').find('span').eq(1).find('span').eq(0).text().trim()
-      const href = $(element).find('a').attr('href')
-
-      if (text) {
-        chapters.push({ text, href })
+      if (href && text) {
+        chapters.push({ text, href: `https://fanfox.net/${href}`, date })
       }
     })
 
-    // author is broken
+    const latestChapter = chapters.length > 0 ? chapters[0].title : null
 
-    res.json({ author, status, latestChapter, chapters, coverHref })
+    res.json({
+      author,
+      status,
+      latestChapter,
+      chapters,
+      coverHref
+    })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(500).json({ error: 'Failed to fetch detail' })
   }
 })
@@ -187,6 +170,7 @@ router.get('/mangas/pages', async (req, res) => {
   const { search } = req.query
 
   try {
+    // https://fanfox.net/manga/naruto/v72/c699/1.html
     const response = await axios.get(
       `${search}/images?is_prev=False&current_page=1&reading_style=long_strip`,
       {
@@ -209,7 +193,7 @@ router.get('/mangas/pages', async (req, res) => {
       const href = $(element).attr('src')
 
       if (text) {
-        pages.push({ text, href })
+        pages.push({ text, href: `https://fanfox.net/${href}` })
       }
     })
 

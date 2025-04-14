@@ -12,7 +12,7 @@ const mapBookmark = (item: any) => ({
   provider: item.provider,
   latestRead: item.latestRead,
   createdAt: item.createdAt,
-  latestChapter: item.latestChapter,
+  latestChapter: item.latestChapter
 })
 
 const sortBookmarks = (items: any[], sortType: string) => {
@@ -20,7 +20,7 @@ const sortBookmarks = (items: any[], sortType: string) => {
     if (sortType === 'title') {
       return a.title.localeCompare(b.title, undefined, {
         numeric: true,
-        sensitivity: 'base',
+        sensitivity: 'base'
       })
     }
     if (sortType === 'createdAt') {
@@ -75,9 +75,10 @@ export const Bookmarks: React.FC = () => {
   const searchBookmarks = (value: string) => {
     const search = value.toLowerCase()
     const filtered = allBookmarks.filter((b) => b.title.toLowerCase().includes(search))
-    setBookmarks(filtered)
+    const sortedFiltered = sortBookmarks(filtered, sortType)
+    setBookmarks(sortedFiltered)
   }
-
+  
   const handleDeleteBookmark = async (e: React.MouseEvent, item: any) => {
     e.stopPropagation()
     await window.api.toggleBookmark(item.title, item.link, item.cover, item.provider)
@@ -98,8 +99,8 @@ export const Bookmarks: React.FC = () => {
           typeof latest.response?.data?.latestChapter === 'string'
             ? latest.response.data.latestChapter
             : typeof latest.response?.data?.latestChapter === 'string'
-            ? latest.response.data.latestChapter
-            : null
+              ? latest.response.data.latestChapter
+              : null
         if (safeLatest) {
           await window.api.updateLatestChapter(b.title, b.link, b.provider, safeLatest)
         }
@@ -119,15 +120,17 @@ export const Bookmarks: React.FC = () => {
           onChange={(e) => searchBookmarks(e.target.value)}
           style={{ width: '45%' }}
           placeholder="Search from your bookmarks"
+          disabled={updating}
         />
         <Select
           defaultValue={{ label: 'Unread', value: 'unread', key: 'unread' }}
           style={{ width: 160 }}
           onChange={handleSortChange}
+          disabled={updating}
           options={[
             { value: 'unread', label: 'Unread', key: 'unread' },
             { value: 'title', label: 'Alphabetically', key: 'title' },
-            { value: 'createdAt', label: 'Added Date', key: 'createdAt' },
+            { value: 'createdAt', label: 'Added Date', key: 'createdAt' }
           ]}
           labelInValue
         />
@@ -158,7 +161,10 @@ export const Bookmarks: React.FC = () => {
                     </Tooltip>
                   )}
                   <Tooltip title="Delete bookmark" className="icon-hover-delete">
-                    <DeleteOutlined onClick={(e) => handleDeleteBookmark(e, item)} />
+                    <DeleteOutlined
+                      disabled={updating}
+                      onClick={(e) => handleDeleteBookmark(e, item)}
+                    />
                   </Tooltip>
                 </Flex>
               }

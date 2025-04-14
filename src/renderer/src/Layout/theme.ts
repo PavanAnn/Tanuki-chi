@@ -2,8 +2,8 @@
 export const theme = {
   token: {
     // Seed Token
-    colorPrimary: '#01062C',
-    colorSecondary: '#01062C'
+    colorPrimary: '#1d4ed8',
+    colorSecondary: '#f72585'
     // colorBgContainer: '#000957',
 
     // Alias Token
@@ -12,9 +12,14 @@ export const theme = {
 
 export const styledTheme = {
   colors: {
-    primary: '#000957',
-    secondary: '#01062C',
-    bg: '#000957',
-    unselected: '#433D8B'
+    primary: '#f72585',
+    secondary: '#e0e7ff',
+    bg: '#f0f5f9',
+    unselected: '#433D8B',
+    sidebarBg: '#ffffff',
+    sidebarText: '#4A4A4A',
+    hover: '#f5f5f5',
+    active: '#e0e7ff',
+    activeText: '#1d4ed8'
   }
 }

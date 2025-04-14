@@ -12,17 +12,22 @@ const api = {
     provider: string,
     latestRead?: string,
     latestChapter?: string
-  ) => ipcRenderer.invoke('toggle-bookmark', title, link, coverHref, provider, latestRead, latestChapter),
+  ) =>
+    ipcRenderer.invoke(
+      'toggle-bookmark',
+      title,
+      link,
+      coverHref,
+      provider,
+      latestRead,
+      latestChapter
+    ),
 
   updateLatestRead: (title: string, link: string, latestRead: string | null) =>
     ipcRenderer.invoke('update-latest-read', title, link, latestRead),
 
-  updateLatestChapter: (
-    title: string,
-    link: string,
-    provider: string,
-    latestChapter: string
-  ) => ipcRenderer.invoke('update-latest-chapter', title, link, provider, latestChapter),
+  updateLatestChapter: (title: string, link: string, provider: string, latestChapter: string) =>
+    ipcRenderer.invoke('update-latest-chapter', title, link, provider, latestChapter),
 
   clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks')
 }

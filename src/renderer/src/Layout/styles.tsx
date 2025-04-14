@@ -12,6 +12,7 @@ export const MainContent = styled.main`
   background-color: ${({ theme }) => theme.colors.bg};
   overflow-y: auto;
   margin-top: 6vh;
-  max-width: 90%;
+  min-width: calc(100% - 200px);
 `
+
 // ${({ theme }) => theme.colors.bg
