@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { SidebarContainer, SidebarSection } from './styles'
 import { Divider, Flex, Image } from 'antd'
 import logo from '../../assets/icon.png'
@@ -18,14 +18,14 @@ const Sidebar: React.FC = () => {
       </Flex>
       <Divider style={{ margin: '-10% 0px 0px 0px' }} />
       <Flex vertical gap={'12px'} style={{ marginTop: '20px' }}>
-        <SidebarSection className={isActive('/') ? 'active' : ''}>
-          <Link to="/">Search</Link>
+        <SidebarSection to="/" className={isActive('/') ? 'active' : ''}>
+         Search
         </SidebarSection>
-        <SidebarSection className={isActive('/bookmarks') ? 'active' : ''}>
-          <Link to="/bookmarks">Bookmarks</Link>
+        <SidebarSection to="/bookmarks" className={isActive('/bookmarks') ? 'active' : ''}>
+          Bookmarks
         </SidebarSection>
-        <SidebarSection className={isActive('/share') ? 'active' : ''}>
-          <Link to="/share">Import/Export</Link>
+        <SidebarSection to="/share" className={isActive('/share') ? 'active' : ''}>
+          Import/Export
         </SidebarSection>
       </Flex>
     </SidebarContainer>

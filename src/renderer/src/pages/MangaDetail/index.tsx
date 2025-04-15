@@ -3,18 +3,16 @@ import {
   LeftOutlined,
   RightOutlined,
   StarFilled,
-  StarOutlined,
   ZoomInOutlined,
   ZoomOutOutlined
 } from '@ant-design/icons'
-import { Button, Flex, Image, Radio } from 'antd'
+import { Button, Descriptions, Flex, Image, Radio, Tag, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   BookmarkContainer,
   ChaptersContainer,
   ChaptersListWrapper,
-  DetailInfoContainer,
   DetailTitle
 } from './styles'
 import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles'
@@ -32,6 +30,10 @@ interface DetailManga {
   latestChapter: string
   chapters: Chapters[]
   coverHref: string
+  tags: string[]
+  releaseDate: string
+  description: string
+
 }
 
 interface Pages {
@@ -137,35 +139,54 @@ export const MangaDetail = () => {
           src={`http://127.0.0.1:3000/api/${imageProxyPrefix}/mangas/image-proxy?url=${encodeURIComponent(res.coverHref)}`}
           preview={true}
         />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '60%' }}>
           <DetailTitle>
             {title}
             <BookmarkContainer>
               {bookmarked ? (
-                <StarFilled
-                  onClick={handleBookmarkClick}
-                  style={{ fontSize: '22px', color: '#FFFF00' }}
-                />
+                <Tooltip title='Remove from bookmarks'>
+                  <Button type="primary" shape="circle" icon={<StarFilled
+                    onClick={handleBookmarkClick}
+                    style={{ fontSize: '22px', color: '#FFFF00' }}
+                  />} />
+                </Tooltip>
+                
               ) : (
-                <StarOutlined
+                <Tooltip title='Save into bookmarks'>
+                <Button variant='solid' type="primary" shape="circle" icon={<StarFilled
                   onClick={handleBookmarkClick}
                   style={{ fontSize: '22px', color: '#FFFFFF' }}
-                />
+                />} />
+                </Tooltip>
               )}
             </BookmarkContainer>
           </DetailTitle>
           <ThemedDivider />
-          <DetailInfoContainer>
-            <p>Author: {res.author}</p>
-            <p>Status: {res.status}</p>
-            <p>Latest Chapter: {res.latestChapter}</p>
-          </DetailInfoContainer>
+          <Descriptions
+            title="Manga Info"
+            column={1}
+            size="small"
+            style={{ maxWidth: '80%' }}
+          >
+            <Descriptions.Item label="Author">{res.author}</Descriptions.Item>
+            <Descriptions.Item label="Status">{res.status}</Descriptions.Item>
+            <Descriptions.Item label="Latest Chapter">{res.latestChapter}</Descriptions.Item>
+            <Descriptions.Item label="Release Date">{res.releaseDate}</Descriptions.Item>
+            <Descriptions.Item label="Tags">
+              {res.tags.map((tag: string) => (
+                <Tag key={tag}>{tag}</Tag>
+              ))}
+            </Descriptions.Item>
+            <Descriptions.Item label="Description">
+              {res.description}
+            </Descriptions.Item>
+          </Descriptions>
         </div>
       </div>
       <ThemedDivider />
       <ChaptersListWrapper>
         {res.chapters.map((element, index) => (
-          <ChaptersContainer key={index}>
+          <ChaptersContainer isLatest={element.text === latest} key={index}>
             <div
               key={element.href}
               onClick={() => showDrawer(element.href, element.text)}

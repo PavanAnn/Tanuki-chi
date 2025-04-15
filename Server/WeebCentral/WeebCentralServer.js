@@ -117,9 +117,6 @@ router.get('/mangas/search', async (req, res) => {
 router.get('/mangas/detail', async (req, res) => {
   const { search } = req.query
 
-  let cookies = ''
-  console.log('--- Server script detail started ---')
-
   try {
     const response = await axios.get(search, {
       headers: {
@@ -145,8 +142,10 @@ router.get('/mangas/detail', async (req, res) => {
     let html = response.data
     let $ = cheerio.load(html)
 
-    const author = $('li:has(strong:contains("Author(s):")) a').text().trim()
+    // Author, Status, Chapters, Latest Chapter, Cover Href 
+    // description, tags
 
+    const author = $('li:has(strong:contains("Author(s):")) a').text().trim()
     const status = $('li:has(strong:contains("Status:")) a').text().trim()
     const chapters = []
     const latestChapter = $('#chapter-list .flex a')
@@ -157,6 +156,10 @@ router.get('/mangas/detail', async (req, res) => {
       .eq(0)
       .text()
     const coverHref = $('picture').first().find('img').attr('src')
+    const description = $('li:has(strong:contains("Description")) p').text().trim()
+    const tags = $('li:has(strong:contains("Tags")) a').map((_, el) => $(el).text().trim()).get()
+    const releaseDate = $('li:has(strong:contains("Released")) span').text().trim()
+
 
     html = responseAllMangas.data
     $ = cheerio.load(html)
@@ -173,7 +176,7 @@ router.get('/mangas/detail', async (req, res) => {
 
     // author is broken
 
-    res.json({ author, status, latestChapter, chapters, coverHref })
+    res.json({ author, status, latestChapter, chapters, coverHref, description, tags, releaseDate })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: 'Failed to fetch detail' })

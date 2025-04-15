@@ -12,7 +12,7 @@ export const theme = {
 
 export const styledTheme = {
   colors: {
-    primary: '#f72585',
+    primary: '#e0e7ff',
     secondary: '#e0e7ff',
     bg: '#f0f5f9',
     unselected: '#433D8B',

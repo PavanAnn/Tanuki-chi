@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { Flex } from 'antd'
 
 // SidebarContainer.ts
@@ -16,7 +16,7 @@ export const SidebarContainer = styled(Flex)`
 `
 
 // SidebarSection.ts
-export const SidebarSection = styled(Flex)`
+export const SidebarSection = styled(Link)`
   height: 40px;
   padding: 0 16px;
   display: flex;
