@@ -39,6 +39,11 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('extensionsAPI', {
+      search: (extensionId: string, text: string) =>
+        ipcRenderer.invoke('extension:search', extensionId, text),
+    });
+    
   } catch (error) {
     console.error(error)
   }

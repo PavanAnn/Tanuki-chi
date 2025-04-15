@@ -68,5 +68,9 @@ declare global {
     electron: ElectronAPI
     api: IElectronAPI
     electronAPI: IElectronAPI
+    extensionsAPI: {
+        search: (extensionId: string, text: string) => Promise<any>;
+      };
+  
   }
 }

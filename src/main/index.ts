@@ -10,6 +10,7 @@ import {
   updateLatestRead
 } from './bookmarkStore'
 import { startExpressServer } from '../../Server/server' // Adjust path as needed
+import { getExtension } from './extensionManager'
 
 function createWindow(): void {
   // Create the browser window.
@@ -46,6 +47,15 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+// ipc test server
+
+
+ipcMain.handle('extension:search', async (_event, extensionId: string, text: string) => {
+  const extension = getExtension(extensionId);
+  return await extension.search(text);
+});
+
 
 // Custom bookmark pavan ---------------------------
 ipcMain.handle('get-bookmarks', () => {
