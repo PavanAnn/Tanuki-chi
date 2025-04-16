@@ -23,7 +23,7 @@ export async function searchWeebCentral(searchTerm: string): Promise<SearchType[
       const $ = cheerio.load(html);
 
       currentMangas = [];
-      $('article').each((index, element) => {
+      $('article').each((_, element) => {
         const secondSection = $(element).find('section').eq(1);
         const link = secondSection.find('a.link-hover').eq(0);
         const href = link.attr('href');

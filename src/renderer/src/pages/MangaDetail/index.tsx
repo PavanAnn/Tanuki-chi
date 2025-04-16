@@ -73,7 +73,6 @@ export const MangaDetail = () => {
     return <div>error</div>
   }
   const handleBookmarkClick = async () => {
-    console.log('TESTES', detail)
     const updated = await window.api.toggleBookmark(
       title,
       id,
@@ -81,9 +80,9 @@ export const MangaDetail = () => {
       provider,
       '',
       detail.lastChapter?.trim() !== ''
-        ? detail.lastChapter
-        : chapters[0]?.attributes?.chapter
-    );
+      ? detail.lastChapter
+      : chapters?.[0]?.attributes?.chapter ?? ''
+      );
         setBookmarked(updated.some((b: any) => b.title === title && b.link === id));
   };
 

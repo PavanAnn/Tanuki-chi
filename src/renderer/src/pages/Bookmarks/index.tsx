@@ -90,9 +90,7 @@ export const Bookmarks: React.FC = () => {
     // all bookmarks
     for (const b of allBookmarks) {
       try {
-        const result = await window.api.getExtensionResult('weebcentral', 'latest', b.link)
-
-        console.log(result)
+        const result = await window.api.getExtensionResult(b.provider, 'latest', b.link)
   
         const safeLatest =
           typeof result?.response?.data?.latestChapter === 'string'
@@ -113,7 +111,6 @@ export const Bookmarks: React.FC = () => {
     
   return (
     <>
-    <Button onClick={() => console.log(bookmarks)}>console</Button>
       <Flex gap="22px">
         <Input
           onChange={(e) => searchBookmarks(e.target.value)}

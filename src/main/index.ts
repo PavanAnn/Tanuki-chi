@@ -9,7 +9,6 @@ import {
   updateLatestChapterForBookmark,
   updateLatestRead
 } from './bookmarkStore'
-import { startExpressServer } from '../../Server/server' // Adjust path as needed
 import * as MangaDex from '../extensions/MangaDex';
 import * as WeebCentral from '../extensions/WeebCentral';
 import './imageProxy'
@@ -117,7 +116,6 @@ ipcMain.handle('clear-bookmarks', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  startExpressServer()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

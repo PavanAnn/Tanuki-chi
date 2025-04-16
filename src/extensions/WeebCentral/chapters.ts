@@ -1,6 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
+
+// list of chapters
 export async function getWeebCentralChapters(chapterUrl: string): Promise<string[]> {
   try {
     const fullChapterListUrl = chapterUrl.replace(/\/[^\/]+$/, '/full-chapter-list')
@@ -19,7 +21,7 @@ export async function getWeebCentralChapters(chapterUrl: string): Promise<string
     // Target all image tags that represent reader pages
     const chapters: any = []
 
-    $('div.flex.items-center').each((index, element) => {
+    $('div.flex.items-center').each((_, element) => {
         const text = $(element).find('a').find('span').eq(1).find('span').eq(0).text().trim()
         const href = $(element).find('a').attr('href')
   

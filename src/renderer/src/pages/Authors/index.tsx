@@ -1,5 +1,3 @@
-import { Button, Modal, Upload, message } from 'antd'
-import { UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import { mapBookmarks } from '../utils'
 
