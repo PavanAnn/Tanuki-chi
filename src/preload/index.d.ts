@@ -61,6 +61,15 @@ export interface IElectronAPI {
   >
 
   clearBookmarks: () => Promise<[]>
+  // IPC 
+  getExtensionResult: (
+    provider: string,
+    action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest',
+    payload: any
+  ) => Promise<any>;
+
+  proxyImage: (url: string) => Promise<{ contentType: string; data: string }>;
+
 }
 
 declare global {
@@ -68,9 +77,5 @@ declare global {
     electron: ElectronAPI
     api: IElectronAPI
     electronAPI: IElectronAPI
-    extensionsAPI: {
-        search: (extensionId: string, text: string) => Promise<any>;
-      };
-  
   }
 }

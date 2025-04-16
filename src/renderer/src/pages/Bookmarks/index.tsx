@@ -1,5 +1,4 @@
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons'
-import { detailProviderMap } from '@renderer/Features/Store/Detail/useMangaDetailProvider'
 import { Button, Card, Flex, Image, Input, Select, Skeleton, Spin, Tag, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -49,12 +48,12 @@ export const Bookmarks: React.FC = () => {
 
   const navigate = useNavigate()
 
-  const handleNavigate = (providerName: string, link: string, title: string) => {
-    const encodedLink = encodeURIComponent(link)
-    const encodedTitle = encodeURIComponent(title)
-    const encodedProvider = encodeURIComponent(providerName)
-    navigate(`/detail?provider=${encodedProvider}&link=${encodedLink}&title=${encodedTitle}`)
-  }
+  const handleNavigate = (provider: string, mangaId: string, title: string) => {
+    navigate('/detail', {
+      state: { provider, id: mangaId, title },
+    });
+  };
+ 
 
   const fetchAndSetBookmarks = async () => {
     const savedBookmarks = await window.api.getBookmarks()
@@ -69,16 +68,16 @@ export const Bookmarks: React.FC = () => {
 
   const handleSortChange = (value: { value: string }) => {
     setSortType(value.value)
-    setBookmarks(sortBookmarks(bookmarks, value.value))
+    setBookmarks(sortBookmarks(allBookmarks, value.value))
   }
-
+  
   const searchBookmarks = (value: string) => {
     const search = value.toLowerCase()
     const filtered = allBookmarks.filter((b) => b.title.toLowerCase().includes(search))
     const sortedFiltered = sortBookmarks(filtered, sortType)
     setBookmarks(sortedFiltered)
   }
-  
+    
   const handleDeleteBookmark = async (e: React.MouseEvent, item: any) => {
     e.stopPropagation()
     await window.api.toggleBookmark(item.title, item.link, item.cover, item.provider)
@@ -87,20 +86,19 @@ export const Bookmarks: React.FC = () => {
 
   const handleUpdateChapters = async () => {
     setUpdating(true)
-    for (const b of bookmarks) {
-      const providerEntry = detailProviderMap[b.provider]
-      if (!providerEntry?.getLatest) {
-        console.warn(`No getLatest method for provider ${b.provider}`)
-        continue
-      }
+  
+    // all bookmarks
+    for (const b of allBookmarks) {
       try {
-        const latest = await providerEntry.getLatest(b.link)
+        const result = await window.api.getExtensionResult('weebcentral', 'latest', b.link)
+
+        console.log(result)
+  
         const safeLatest =
-          typeof latest.response?.data?.latestChapter === 'string'
-            ? latest.response.data.latestChapter
-            : typeof latest.response?.data?.latestChapter === 'string'
-              ? latest.response.data.latestChapter
-              : null
+          typeof result?.response?.data?.latestChapter === 'string'
+            ? result.response.data.latestChapter
+            : null
+  
         if (safeLatest) {
           await window.api.updateLatestChapter(b.title, b.link, b.provider, safeLatest)
         }
@@ -108,13 +106,14 @@ export const Bookmarks: React.FC = () => {
         console.error(`Error updating ${b.title}:`, err)
       }
     }
-
+  
     await fetchAndSetBookmarks()
     setUpdating(false)
   }
-
+    
   return (
     <>
+    <Button onClick={() => console.log(bookmarks)}>console</Button>
       <Flex gap="22px">
         <Input
           onChange={(e) => searchBookmarks(e.target.value)}
@@ -141,7 +140,7 @@ export const Bookmarks: React.FC = () => {
 
       <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap', marginTop: '24px' }}>
         {bookmarks.map((item, index) => {
-          const unreadCount = getUnreadChapters(item.latestRead, item.latestChapter)
+          const unreadCount = getUnreadChapters(item.latestRead || '', item.latestChapter || '')
           return (
             <Card
               key={index}
@@ -171,9 +170,7 @@ export const Bookmarks: React.FC = () => {
             >
               <Image
                 width="100%"
-                src={`http://127.0.0.1:3000/api/${item.provider}/mangas/image-proxy?url=${encodeURIComponent(
-                  item.cover
-                )}`}
+                src={item.cover}
                 preview={false}
               />
               <Flex gap="4px 0" wrap style={{ marginTop: '20px' }}>

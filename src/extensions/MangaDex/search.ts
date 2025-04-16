@@ -1,48 +1,45 @@
+// src/extensions/mangadex.ts
 import axios from 'axios';
+import { SearchType } from '../types';
 
 const baseUrl = 'https://api.mangadex.org';
+const coverBaseUrl = 'https://uploads.mangadex.org/covers';
 
-export interface MangaDexSearchResult {
-  id: string;
-  title: string;
-  description?: string;
-  coverUrl?: string;
-}
-
-export default async function search(
-  title: string
-): Promise<MangaDexSearchResult[]> {
+export async function searchMangadex(title: string): Promise<SearchType[]> {
   try {
-    const resp = await axios.get(`${baseUrl}/manga`, {
+    const response = await axios.get(`${baseUrl}/manga`, {
       params: {
         title,
-        limit: 20,
-        includes: ['cover_art', 'author', 'artist']
-      }
+        includes: ['cover_art'],
+      },
     });
 
-    const results = resp.data?.data ?? [];
+    const mangas = response.data.data;
 
-    return results.map((item: any): MangaDexSearchResult => {
-      const id = item.id;
-      const attributes = item.attributes;
-      const title = attributes.title?.en ?? 'No Title';
-      const description = attributes.description?.en ?? '';
+    return mangas.map((manga: any) => {
+      const attributes = manga.attributes;
 
-      const coverRel = item.relationships.find((rel: any) => rel.type === 'cover_art');
-      const coverUrl = coverRel
-        ? `https://uploads.mangadex.org/covers/${id}/${coverRel.attributes.fileName}.256.jpg`
+      const extractedTitle =
+        attributes.title?.en ||
+        Object.values(attributes.title || {})[0] ||
+        'Unknown Title';
+
+      const coverRelationship = manga.relationships?.find(
+        (rel: any) => rel.type === 'cover_art'
+      );
+      const coverFileName = coverRelationship?.attributes?.fileName;
+      const coverUrl = coverFileName
+        ? `${coverBaseUrl}/${manga.id}/${coverFileName}`
         : undefined;
 
       return {
-        id,
-        title,
-        description,
-        coverUrl
+        id: manga.id,
+        title: extractedTitle,
+        coverUrl,
       };
     });
   } catch (error) {
-    console.error(`Failed to search MangaDex: ${error}`);
-    return [];
+    console.error('Error fetching MangaDex search results:', error);
+    throw error;
   }
 }

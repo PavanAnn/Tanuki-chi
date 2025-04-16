@@ -1,20 +1,21 @@
-import { useNavigate } from 'react-router-dom'
-import { HomeContainer, MangaGrid } from './styles'
-import { useSearchStore } from '../../Features/Store/Search/useSearchStore'
-import { Card, Flex, Image, Spin } from 'antd'
-import { LoadingOutlined } from '@ant-design/icons'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { HomeContainer, MangaGrid } from './styles';
+import { useSearchStore } from '../../Features/Store/Search/useSearchStore';
+import { Card, Flex, Image, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { SearchType } from '@renderer/types';
 
 const Home: React.FC = () => {
-  const navigate = useNavigate()
-  const { data, isFetching } = useSearchStore()
+  const navigate = useNavigate();
+  const { data, isFetching } = useSearchStore();
 
-  const handleClick = (provider: string, link: string, title: string) => {
-    const encodedLink = encodeURIComponent(link)
-    const encodedTitle = encodeURIComponent(title)
-    const encodedProvider = encodeURIComponent(provider)
-
-    navigate(`/detail?provider=${encodedProvider}&link=${encodedLink}&title=${encodedTitle}`)
-  }
+  // Updated: Pass mangaId (i.e. id) along with provider and title
+  const handleClick = (provider: string, mangaId: string, title: string) => {
+    navigate('/detail', {
+      state: { provider, id: mangaId, title },
+    });
+  };
 
   if (isFetching) {
     return (
@@ -26,7 +27,7 @@ const Home: React.FC = () => {
           size="large"
         />
       </Flex>
-    )
+    );
   }
 
   return (
@@ -34,9 +35,9 @@ const Home: React.FC = () => {
       <MangaGrid>
         {Array.isArray(data) && data.length > 0 ? (
           data.every((providerEntry) => {
-            const providerName = Object.keys(providerEntry)[0]
-            const mangas = providerEntry[providerName]
-            return mangas.length === 0
+            const providerName = Object.keys(providerEntry)[0];
+            const mangas = providerEntry[providerName];
+            return mangas.length === 0;
           }) ? (
             <div style={{ textAlign: 'center', marginTop: '40px' }}>
               <h2>No results found for this search</h2>
@@ -46,29 +47,32 @@ const Home: React.FC = () => {
             <Flex vertical gap="large">
               <h1>Search results:</h1>
               {data.map((providerEntry) => {
-                const providerName = Object.keys(providerEntry)[0]
-                const mangas = providerEntry[providerName]
+                const providerName = Object.keys(providerEntry)[0];
+                const mangas = providerEntry[providerName];
 
                 return (
                   <div key={providerName}>
                     {mangas.length > 0 && (
                       <>
-                        <h2 style={{ textTransform: 'capitalize' }}>{providerName}</h2>
+                        <h2 style={{ textTransform: 'capitalize' }}>
+                          {providerName}
+                        </h2>
                         <Flex gap="large" wrap style={{ marginBottom: 32 }}>
-                          {mangas.map((manga: any) => (
+                          {mangas.map((manga: SearchType, index) => (
                             <Card
                               size="small"
-                              key={manga.id || manga.href}
+                              key={index}
                               title={manga.title}
-                              onClick={() => handleClick(providerName, manga.href, manga.title)}
+                              // Now we pass manga.id as the unique identifier
+                              onClick={() =>
+                                handleClick(providerName, manga.id, manga.title)
+                              }
                               style={{ width: '15%', cursor: 'pointer' }}
                             >
                               <Image
                                 preview={false}
                                 loading="lazy"
-                                src={`http://127.0.0.1:3000/api/${providerName}/mangas/image-proxy?url=${encodeURIComponent(
-                                  manga.cover
-                                )}`}
+                                src={manga.coverUrl}
                                 fallback="/fallback.jpg"
                               />
                             </Card>
@@ -77,7 +81,7 @@ const Home: React.FC = () => {
                       </>
                     )}
                   </div>
-                )
+                );
               })}
             </Flex>
           )
@@ -89,7 +93,7 @@ const Home: React.FC = () => {
         )}
       </MangaGrid>
     </HomeContainer>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

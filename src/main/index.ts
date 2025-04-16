@@ -10,7 +10,16 @@ import {
   updateLatestRead
 } from './bookmarkStore'
 import { startExpressServer } from '../../Server/server' // Adjust path as needed
-import { getExtension } from './extensionManager'
+import * as MangaDex from '../extensions/MangaDex';
+import * as WeebCentral from '../extensions/WeebCentral';
+import './imageProxy'
+
+const extensions = {
+  mangadex: MangaDex,
+  weebcentral: WeebCentral,
+  // mangafox: MangaFox,
+};
+
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,9 +60,14 @@ function createWindow(): void {
 // ipc test server
 
 
-ipcMain.handle('extension:search', async (_event, extensionId: string, text: string) => {
-  const extension = getExtension(extensionId);
-  return await extension.search(text);
+ipcMain.handle('extension:invoke', async (_event, provider: string, action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest', payload: any) => {
+  const ext = extensions[provider];
+  if (!ext) throw new Error(`Extension not found for provider: ${provider}`);
+
+  const fn = ext[action];
+  if (typeof fn !== 'function') throw new Error(`Action '${action}' not available on provider '${provider}'`);
+
+  return await fn(payload);
 });
 
 

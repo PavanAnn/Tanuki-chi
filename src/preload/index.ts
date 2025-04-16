@@ -29,7 +29,12 @@ const api = {
   updateLatestChapter: (title: string, link: string, provider: string, latestChapter: string) =>
     ipcRenderer.invoke('update-latest-chapter', title, link, provider, latestChapter),
 
-  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks')
+  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks'),
+  // IPC
+  getExtensionResult: (provider: string, action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest', payload: any) =>
+    ipcRenderer.invoke('extension:invoke', provider, action, payload),
+  proxyImage: (url: string) => ipcRenderer.invoke('image:proxy', url),
+
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -39,10 +44,6 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
-    contextBridge.exposeInMainWorld('extensionsAPI', {
-      search: (extensionId: string, text: string) =>
-        ipcRenderer.invoke('extension:search', extensionId, text),
-    });
     
   } catch (error) {
     console.error(error)
