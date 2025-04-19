@@ -1,5 +1,14 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 
+interface UpdateNotification {
+  title: string
+  link: string
+  provider: string
+  newChapter: string
+  date: string
+}
+
+
 export interface IElectronAPI {
   getBookmarks: () => Promise<
     {
@@ -69,6 +78,12 @@ export interface IElectronAPI {
   ) => Promise<any>;
 
   proxyImage: (url: string) => Promise<{ contentType: string; data: string }>;
+
+  // Notifications
+  getUpdateNotifications: () => Promise<UpdateNotification[]>
+  addUpdateNotification: (n: UpdateNotification) => Promise<void>
+  clearUpdateNotifications:  () => Promise<[]>
+
 
 }
 

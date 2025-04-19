@@ -23,7 +23,7 @@ export async function getLatestWeebCentral(chapterUrl: string) {
       .text()
       .trim()
 
-    return{ latestChapter }
+    return{ lastChapter: latestChapter }
     } catch (error) {
       console.error('Failed to fetch WeebCentral pages:', error);
       throw new Error('Failed to fetch pages');

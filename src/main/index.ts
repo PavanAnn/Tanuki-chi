@@ -12,6 +12,7 @@ import {
 import * as MangaDex from '../extensions/MangaDex';
 import * as WeebCentral from '../extensions/WeebCentral';
 import './imageProxy'
+import { addUpdateNotification, clearUpdateNotifications, getUpdateNotifications } from './notificationStore'
 
 const extensions = {
   mangadex: MangaDex,
@@ -56,9 +57,7 @@ function createWindow(): void {
   }
 }
 
-// ipc test server
-
-
+// ipc extensions handler
 ipcMain.handle('extension:invoke', async (_event, provider: string, action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest', payload: any) => {
   const ext = extensions[provider];
   if (!ext) throw new Error(`Extension not found for provider: ${provider}`);
@@ -68,6 +67,20 @@ ipcMain.handle('extension:invoke', async (_event, provider: string, action: 'sea
 
   return await fn(payload);
 });
+
+// ipc notifications handler
+ipcMain.handle('get-update-notifications', () => {
+  return getUpdateNotifications()
+})
+
+ipcMain.handle('add-update-notification', (_, notif) => {
+  return addUpdateNotification(notif)
+})
+
+ipcMain.handle('clear-update-notifications', () => {
+  clearUpdateNotifications()
+})
+
 
 
 // Custom bookmark pavan ---------------------------

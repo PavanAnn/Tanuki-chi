@@ -24,4 +24,13 @@ export interface PageType {
   text: string;
 }
 
+export interface UpdateNotification {
+  title: string
+  link: string
+  provider: string
+  newChapter: string
+  date: string
+}
+
+
 // export interface ChapterType

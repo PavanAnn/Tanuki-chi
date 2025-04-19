@@ -86,19 +86,28 @@ export const Bookmarks: React.FC = () => {
 
   const handleUpdateChapters = async () => {
     setUpdating(true)
-  
-    // all bookmarks
     for (const b of allBookmarks) {
-      try {
+        try {
+        // return a lastChapter string
         const result = await window.api.getExtensionResult(b.provider, 'latest', b.link)
   
         const safeLatest =
-          typeof result?.response?.data?.latestChapter === 'string'
-            ? result.response.data.latestChapter
+          typeof result.lastChapter === 'string'
+            ? result.lastChapter
             : null
   
-        if (safeLatest) {
+        // safeLatest !== b.latestChapter
+        if (safeLatest && safeLatest !== b.latestChapter) {
           await window.api.updateLatestChapter(b.title, b.link, b.provider, safeLatest)
+  
+          // Add a notification
+          await window.api.addUpdateNotification({
+            title: b.title,
+            link: b.link,
+            provider: b.provider,
+            newChapter: safeLatest,
+            date: new Date().toISOString()
+          })
         }
       } catch (err) {
         console.error(`Error updating ${b.title}:`, err)
@@ -108,7 +117,7 @@ export const Bookmarks: React.FC = () => {
     await fetchAndSetBookmarks()
     setUpdating(false)
   }
-    
+      
   return (
     <>
       <Flex gap="22px">

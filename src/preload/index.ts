@@ -34,7 +34,9 @@ const api = {
   getExtensionResult: (provider: string, action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest', payload: any) =>
     ipcRenderer.invoke('extension:invoke', provider, action, payload),
   proxyImage: (url: string) => ipcRenderer.invoke('image:proxy', url),
-
+  getUpdateNotifications: () => ipcRenderer.invoke('get-update-notifications'),
+  addUpdateNotification: (n) => ipcRenderer.invoke('add-update-notification', n),
+  clearUpdateNotifications: () => ipcRenderer.invoke('clear-update-notifications')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

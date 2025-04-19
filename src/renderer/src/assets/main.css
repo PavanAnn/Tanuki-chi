@@ -1,4 +1,31 @@
 @import './base.css';
+/* 1) Thin scrollbar */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* 2) Track stays visible */
+*::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+/* 3) Thumb styling */
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+/* 4) Remove any arrows/buttons */
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
 
 body {
   display: flex;
@@ -6,6 +33,11 @@ body {
   background-size: cover;
   user-select: none;
   color: #1d4ed8;
+  
+}
+
+.ant-popover-inner {
+  overflow-y: auto;
 }
 
 code {

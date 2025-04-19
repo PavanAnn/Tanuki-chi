@@ -27,6 +27,13 @@ const Sidebar: React.FC = () => {
         <SidebarSection to="/share" className={isActive('/share') ? 'active' : ''}>
           Import/Export
         </SidebarSection>
+          {false &&
+        <><SidebarSection to="/update" className={isActive('/update') ? 'active' : ''}>
+            Update App
+          </SidebarSection><SidebarSection to="/about" className={isActive('/about') ? 'active' : ''}>
+              About
+            </SidebarSection></> }
+
       </Flex>
     </SidebarContainer>
   )
