@@ -4,7 +4,7 @@ import { useSearchStore } from '../../Features/Store/Search/useSearchStore';
 import { useNavigate } from 'react-router-dom';
 import { getAllProviderSearchResults } from '@renderer/Features/Store/useSearchAllProviders';
 import Search from 'antd/es/input/Search';
-import { Badge, Button, Flex, List, Popover, Select } from 'antd';
+import { Badge, Button, Divider, Flex, List, Popover, Select } from 'antd';
 import { UpdateNotification } from '@renderer/types';
 import { BellOutlined } from '@ant-design/icons';
 
@@ -92,12 +92,13 @@ const [popoverVisible, setPopoverVisible] = useState(false);
             </div>
           }
           title={
-            <Flex align='center' ><Flex>Chapter Updates</Flex>
-              <Button type="link" onClick={handleClear} style={{ padding: 0, marginLeft: 'auto', width: 'fit-content' }}>
-                Clear all
-              </Button>
-              
-            </Flex>
+            <><Flex align='center'><Flex style={{ fontSize: '16px', fontWeight: '500' }}>Chapter Updates</Flex>
+              {notifications.length > 0 &&
+                <Button type="link" onClick={handleClear} style={{ padding: 0, marginLeft: 'auto', width: 'fit-content' }}>
+                  Clear all
+                </Button>}
+
+            </Flex><Divider style={{ margin: 0 }} /></>
           }
           trigger="click"
           open={popoverVisible}
@@ -105,7 +106,7 @@ const [popoverVisible, setPopoverVisible] = useState(false);
           placement="bottomRight"
         >
           <Badge count={notifications.length} overflowCount={9}>
-            <BellOutlined style={{ fontSize: '24px', cursor: 'pointer' }} />
+            <BellOutlined style={{ fontSize: '24px', cursor: 'pointer', color: '#000957' }} />
           </Badge>
         </Popover></Flex>
 

@@ -32,5 +32,25 @@ export interface UpdateNotification {
   date: string
 }
 
+export interface BookmarkType {
+  title: string
+  link: string
+  coverHref: string
+  latestRead?: string
+  provider: string
+  createdAt: string
+  updatedAt: string
+  latestChapter: string
+}
+
+export type BookmarkCardProps = {
+  data: BookmarkType
+  updating: boolean
+  onNavigate: (provider: string, link: string, title: string) => void
+  onDelete: (e: React.MouseEvent, item: BookmarkType) => void
+}
+
+
+
 
 // export interface ChapterType

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HomeContainer, MangaGrid } from './styles';
 import { useSearchStore } from '../../Features/Store/Search/useSearchStore';
-import { Button, Card, Flex, Image, Spin } from 'antd';
+import { Card, Flex, Image, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { SearchType } from '@renderer/types';
 
@@ -32,7 +32,6 @@ const Home: React.FC = () => {
 
   return (
     <HomeContainer>
-      <Button onClick={() => console.log(window.api.getUpdateNotifications())}>Check updates</Button>
       <MangaGrid>
         {Array.isArray(data) && data.length > 0 ? (
           data.every((providerEntry) => {
