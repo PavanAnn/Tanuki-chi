@@ -131,6 +131,9 @@ export const MangaDetail = () => {
             </Descriptions.Item>
             <Descriptions.Item label="Description">{detail.description}</Descriptions.Item>
           </Descriptions>
+          <Flex style={{ marginTop: '20px' }}>
+            Extension: {provider}
+          </Flex>
         </div>
       </div>
       <ThemedDivider />
