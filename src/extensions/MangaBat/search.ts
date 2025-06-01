@@ -1,10 +1,8 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { SearchType } from '../types'
-import fs from 'fs'
 
 // Define the search result type for MangaBat.
-
 export async function searchMangaBat(searchTerm: string): Promise<SearchType[]> {
   if (!searchTerm) {
     throw new Error('Search term is required.')
@@ -20,7 +18,7 @@ export async function searchMangaBat(searchTerm: string): Promise<SearchType[]> 
       const response = await axios.get(
         `https://www.mangabats.com/search/story/${encodeURIComponent(searchTerm)}?page=${offset}`,
         {
-          decompress: true, // this goes here, NOT inside headers
+          decompress: true,
           headers: {
             accept:
               'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
@@ -31,7 +29,6 @@ export async function searchMangaBat(searchTerm: string): Promise<SearchType[]> 
             referer: `https://www.mangabats.com/search/story/${encodeURIComponent(searchTerm)}?page=${offset - 1}`,
             'user-agent':
               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
-            // Other sec headers optional
           }
         }
       )

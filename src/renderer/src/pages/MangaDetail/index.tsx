@@ -16,7 +16,7 @@ import { CustomDrawer } from './Drawer'
 import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailTitle } from './styles'
 import { useMangaDetail } from '../../Features/Hooks/useMangaDetail'
 import { useMangaPages } from '../../Features/Hooks/useMangaPages'
-import { useProxiedImages } from '../../Features/Hooks/useProxiedImages'
+import { fetchSingleProxiedImage, requiresProxy } from '@renderer/Features/Proxy/sinlgeProxy'
 
 interface Chapter {
   id: string
@@ -30,7 +30,7 @@ export const MangaDetail = () => {
   const { state } = useLocation() as { state: { provider: string; id: string; title: string } }
   const { provider, id, title } = state || {}
   const navigate = useNavigate()
-
+  // id is the link to the detail page
   if (!provider || !id || !title) return <div>Invalid or missing provider, id, or title.</div>
 
   const [isDrawerOpen, setDrawerOpen] = useState(false)
@@ -43,7 +43,10 @@ export const MangaDetail = () => {
   const selectedChapterId = selectedChapter?.id || ''
   const pagesQuery = useMangaPages(provider, selectedChapterId)
   const pages = pagesQuery.data ?? []
-  const proxiedImages = useProxiedImages(pages)
+
+  const [proxiedCoverUrl, setProxiedCoverUrl] = useState<string | null>(null)
+
+  const providerNeedsProxy = requiresProxy(provider);
 
   useEffect(() => {
     ;(async () => {
@@ -55,6 +58,14 @@ export const MangaDetail = () => {
       }
     })()
   }, [title, id, provider])
+
+  useEffect(() => {
+    if (!detail?.coverUrl) return
+    ;(async () => {
+      const proxiedUrl = await fetchSingleProxiedImage(provider, detail.coverUrl, {})
+      setProxiedCoverUrl(proxiedUrl)
+    })()
+  }, [detail?.coverUrl, provider])
 
   if (isLoading) {
     return (
@@ -116,8 +127,11 @@ export const MangaDetail = () => {
   return (
     <div>
       {/* Cover and manga info */}
-      <div style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}>
-        <Image width={300} src={detail.coverUrl} preview={true} />
+      <div
+        style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}
+        onClick={() => console.log(pagesQuery)}
+      >
+        <Image width={300} src={proxiedCoverUrl || detail.coverUrl} preview={true} />
         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '60%' }}>
           <DetailTitle>
             {detail.title}
@@ -201,6 +215,7 @@ export const MangaDetail = () => {
         width="90%"
         extra={
           <Flex gap="16px">
+            <Button onClick={() => console.log(pages)}>Check</Button>
             <Button
               disabled={chapterIndex === -1 || chapterIndex === (chapters?.length || 0) - 1}
               onClick={() => changeChapter(1)}
@@ -249,14 +264,19 @@ export const MangaDetail = () => {
               />
             </Flex>
           ) : pages.length > 0 ? (
-            pages.map(page => (
+            pages.map((page, index) => (
               <Flex
-                key={page.href}
+                key={index}
                 style={{ width: `${pageSize}%`, marginBottom: 16 }}
                 justify="center"
                 align="center"
               >
-                <Image width="100%" src={proxiedImages?.[page.href] || ''} preview={false} />
+                <Image
+                  width="100%"
+                  src={providerNeedsProxy ? `data:image/jpeg;base64,${page.data}` : page.href}
+                  alt={page.text}
+                  preview={false}
+                />
               </Flex>
             ))
           ) : (

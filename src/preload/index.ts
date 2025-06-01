@@ -40,7 +40,8 @@ const api = {
   proxyImage: (url: string) => ipcRenderer.invoke('image:proxy', url),
   getUpdateNotifications: () => ipcRenderer.invoke('get-update-notifications'),
   addUpdateNotification: n => ipcRenderer.invoke('add-update-notification', n),
-  clearUpdateNotifications: () => ipcRenderer.invoke('clear-update-notifications')
+  clearUpdateNotifications: () => ipcRenderer.invoke('clear-update-notifications'),
+  getExtensions: () => ipcRenderer.invoke('get-extensions-metadata')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

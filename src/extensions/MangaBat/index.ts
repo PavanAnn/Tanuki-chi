@@ -1,2 +1,7 @@
-export { searchMangaBat as search } from './search';
+export { searchMangaBat as search } from './search'
 export { imageProxyMangaBat as proxy } from './imageProxy'
+export { getMangaBatDetails as detail } from './detail'
+export { getMangaBatChapters as chapters } from './chapters'
+export { getPages as pages } from './pages'
+export { METADATA } from './metadata'
+export { getLatestMangabat as latest } from './latest'

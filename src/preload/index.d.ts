@@ -8,6 +8,14 @@ interface UpdateNotification {
   date: string
 }
 
+export interface ExtensionMetadata {
+  id: string;
+  version: string;
+  name: string;
+  url: string;
+  proxy: boolean;
+}
+
 
 export interface IElectronAPI {
   getBookmarks: () => Promise<
@@ -84,6 +92,7 @@ export interface IElectronAPI {
   addUpdateNotification: (n: UpdateNotification) => Promise<void>
   clearUpdateNotifications:  () => Promise<[]>
 
+  getExtensions: () => Promise<Record<string, ExtensionMetadata>>;
 
 }
 

@@ -18,6 +18,7 @@ import {
   clearUpdateNotifications,
   getUpdateNotifications
 } from './notificationStore'
+import { ExtensionMetadata } from '../extensions/types'
 
 const extensions = {
   mangadex: MangaDex,
@@ -61,6 +62,19 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+// Metadata handler -> {mangadex: {metadata}, ...}
+// so i can call it as getMetadata(provider)
+ipcMain.handle('get-extensions-metadata', async () => {
+  return Object.values(extensions).reduce(
+    (acc, ext) => {
+      const id = ext.METADATA.id
+      acc[id] = ext.METADATA
+      return acc
+    },
+    {} as Record<string, ExtensionMetadata>
+  )
+})
 
 // ipc extensions handler
 ipcMain.handle(

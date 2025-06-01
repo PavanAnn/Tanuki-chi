@@ -24,7 +24,6 @@ const Home: React.FC = () => {
     })
   }, [data])
 
-  // Updated: Pass mangaId (i.e. id) along with provider and title
   const handleClick = (provider: string, mangaId: string, title: string) => {
     navigate('/detail', {
       state: { provider, id: mangaId, title }
