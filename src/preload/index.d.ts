@@ -73,7 +73,7 @@ export interface IElectronAPI {
   // IPC 
   getExtensionResult: (
     provider: string,
-    action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest',
+    action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest' | 'proxy',
     payload: any
   ) => Promise<any>;
 

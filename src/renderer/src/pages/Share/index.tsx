@@ -29,43 +29,43 @@ export const SharePage: React.FC = () => {
     document.body.removeChild(link)
   }
 
-const importBookmarks = (file: File) => {
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const imported = JSON.parse(e.target?.result as string);
-      if (!Array.isArray(imported)) throw new Error('Invalid format');
+  const importBookmarks = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        const imported = JSON.parse(e.target?.result as string)
+        if (!Array.isArray(imported)) throw new Error('Invalid format')
 
-      // Create a Set of links for fast lookup
-      const existingLinks = new Set(bookmarks.map((b) => b.link));
+        // Create a Set of links for fast lookup
+        const existingLinks = new Set(bookmarks.map((b) => b.link))
 
-      const newBookmarks = imported.filter((item) => !existingLinks.has(item.link));
+        const newBookmarks = imported.filter((item) => !existingLinks.has(item.link))
 
-      for (const item of newBookmarks) {
-        await window.api.toggleBookmark(
-          item.title,
-          item.link,
-          item.cover,
-          item.provider,
-          item.latestRead,
-          item.latestChapter
-        );
+        for (const item of newBookmarks) {
+          await window.api.toggleBookmark(
+            item.title,
+            item.link,
+            item.cover,
+            item.provider,
+            item.latestRead,
+            item.latestChapter
+          )
+        }
+
+        if (newBookmarks.length > 0) {
+          const updated = [...bookmarks, ...newBookmarks]
+          setBookmarks(mapBookmarks(updated))
+          message.success(`${newBookmarks.length} bookmarks imported successfully`)
+        } else {
+          message.info('No new bookmarks to import')
+        }
+      } catch (err) {
+        message.error('Invalid JSON file')
       }
-
-      if (newBookmarks.length > 0) {
-        const updated = [...bookmarks, ...newBookmarks];
-        setBookmarks(mapBookmarks(updated));
-        message.success(`${newBookmarks.length} bookmarks imported successfully`);
-      } else {
-        message.info('No new bookmarks to import');
-      }
-    } catch (err) {
-      message.error('Invalid JSON file');
     }
-  };
 
-  reader.readAsText(file);
-};
+    reader.readAsText(file)
+  }
 
   return (
     <>
@@ -86,24 +86,24 @@ const importBookmarks = (file: File) => {
           <Button icon={<UploadOutlined />}>Import Bookmarks</Button>
         </Upload>
         <Button
-  danger
-  onClick={() => {
-    Modal.confirm({
-      title: 'Are you sure?',
-      content: 'This will delete all your bookmarks. Consider exporting them before.',
-      okText: 'Yes, delete all',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        await window.api.clearBookmarks()
-        setBookmarks([])
-        message.success('All bookmarks cleared.')
-      },
-    })
-  }}
->
-  Clear bookmarks
-</Button>
+          danger
+          onClick={() => {
+            Modal.confirm({
+              title: 'Are you sure?',
+              content: 'This will delete all your bookmarks. Consider exporting them before.',
+              okText: 'Yes, delete all',
+              okType: 'danger',
+              cancelText: 'Cancel',
+              onOk: async () => {
+                await window.api.clearBookmarks()
+                setBookmarks([])
+                message.success('All bookmarks cleared.')
+              }
+            })
+          }}
+        >
+          Clear bookmarks
+        </Button>
       </div>
     </>
   )

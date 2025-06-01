@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
@@ -31,11 +32,14 @@ const api = {
 
   clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks'),
   // IPC
-  getExtensionResult: (provider: string, action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest', payload: any) =>
-    ipcRenderer.invoke('extension:invoke', provider, action, payload),
+  getExtensionResult: (
+    provider: string,
+    action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest' | 'proxy',
+    payload: any
+  ) => ipcRenderer.invoke('extension:invoke', provider, action, payload),
   proxyImage: (url: string) => ipcRenderer.invoke('image:proxy', url),
   getUpdateNotifications: () => ipcRenderer.invoke('get-update-notifications'),
-  addUpdateNotification: (n) => ipcRenderer.invoke('add-update-notification', n),
+  addUpdateNotification: n => ipcRenderer.invoke('add-update-notification', n),
   clearUpdateNotifications: () => ipcRenderer.invoke('clear-update-notifications')
 }
 
@@ -46,7 +50,6 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
-    
   } catch (error) {
     console.error(error)
   }
