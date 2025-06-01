@@ -71,8 +71,8 @@ const Home: React.FC = () => {
                         <Flex gap="large" wrap style={{ marginBottom: 32 }}>
                           {mangas.map((manga: SearchType, index) => {
                             const src = requiresProxy(providerName)
-                              ? proxiedImages[manga.coverUrl] || '/fallback.jpg'
-                              : manga.coverUrl
+                              ? (manga.coverUrl && proxiedImages[manga.coverUrl]) || '/fallback.jpg'
+                              : manga.coverUrl || '/fallback.jpg'
 
                             return (
                               <Card

@@ -59,18 +59,19 @@ const BookmarkCard = memo(
           </Flex>
         }
       >
-        <Image
-          width="100%"
-          src={cover}
-          preview={false}
-          loading="lazy"
-          style={{ objectFit: 'cover' }}
-          placeholder={
-            <Flex align="center" justify="center" >
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 24, margin: 'auto' }} spin />} />
-            </Flex>
-          }
-        />
+        {cover ? (
+          <Image
+            width="100%"
+            src={cover}
+            preview={false}
+            loading="lazy"
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <Flex align="center" justify="center" style={{ height: 200 }}>
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 24, margin: 'auto' }} spin />} />
+          </Flex>
+        )}
         <Flex gap="4px 0" wrap style={{ marginTop: '20px' }}>
           {updating ? (
             <Skeleton.Input active size="default" style={{ width: '80%', height: 20 }} />
