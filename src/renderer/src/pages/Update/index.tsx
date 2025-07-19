@@ -23,7 +23,7 @@ const ButtonRow = styled.div`
 
 const UpdatePage: React.FC = () => {
   const handleCheckUpdates = () => {
-    // Insert your IPC or update check logic here
+    // to-do
   };
 
   return (

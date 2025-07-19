@@ -32,8 +32,6 @@ export async function searchMangaPlus(searchTerm: string): Promise<SearchType[]>
       }
     );
 
-    console.log('false', data)
-
     // flatten all groups into one array of titles
     const allTitles = data.allTitlesGroup
       .flatMap((group) => group.titles);

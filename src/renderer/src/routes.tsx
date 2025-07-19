@@ -8,6 +8,7 @@ import { Bookmarks } from './pages/Bookmarks'
 import { SharePage } from './pages/Share'
 import UpdatePage from './pages/Update'
 import AboutPage from './pages/About'
+import { StatusPage } from './pages/Status'
 
 const AppRoutes: React.FC = () => {
   return (
@@ -18,8 +19,9 @@ const AppRoutes: React.FC = () => {
           <Route path="/detail" element={<MangaDetail />} />
           <Route path="/bookmarks" element={<Bookmarks />} />
           <Route path="/share" element={<SharePage />} />
-          <Route path='/update' element={<UpdatePage />}/>
-          <Route path='/about' element={<AboutPage />} />
+          <Route path="/status" element={<StatusPage />} />
+          <Route path="/update" element={<UpdatePage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Route>
       </Routes>
     </HashRouter>

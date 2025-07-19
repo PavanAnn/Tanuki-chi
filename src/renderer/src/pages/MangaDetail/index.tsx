@@ -39,7 +39,7 @@ export const MangaDetail = () => {
   const [pageSize, setPageSize] = useState(50)
   const [latestRead, setLatestRead] = useState<string | undefined>(undefined)
 
-  const { detail, chapters, isLoading } = useMangaDetail(provider, id)
+  const { detail, chapters, isLoading, isError } = useMangaDetail(provider, id)
   const selectedChapterId = selectedChapter?.id || ''
   const pagesQuery = useMangaPages(provider, selectedChapterId)
   const pages = pagesQuery.data ?? []
@@ -78,6 +78,10 @@ export const MangaDetail = () => {
         />
       </Flex>
     )
+  }
+
+  if (isError) {
+    return <div>Error</div>
   }
 
   // Handlers.
@@ -215,7 +219,6 @@ export const MangaDetail = () => {
         width="90%"
         extra={
           <Flex gap="16px">
-            <Button onClick={() => console.log(pages)}>Check</Button>
             <Button
               disabled={chapterIndex === -1 || chapterIndex === (chapters?.length || 0) - 1}
               onClick={() => changeChapter(1)}

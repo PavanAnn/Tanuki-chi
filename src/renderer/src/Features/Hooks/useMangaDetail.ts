@@ -19,5 +19,10 @@ export const useMangaDetail = (provider: string, id: string) => {
     refetchOnMount: false,
   });
 
-  return { detail: detailQuery.data, chapters: chaptersQuery.data, isLoading: detailQuery.isLoading || chaptersQuery.isLoading };
+  return {
+    detail: detailQuery.data,
+    chapters: chaptersQuery.data,
+    isLoading: detailQuery.isLoading || chaptersQuery.isLoading,
+    isError: detailQuery.isError || chaptersQuery.isError
+  }
 };

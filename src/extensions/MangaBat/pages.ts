@@ -24,7 +24,6 @@ export async function getPages(search: string): Promise<
       const element = images[i]
       const src = $(element).attr('src')?.trim()
       const alt = $(element).attr('alt')?.trim() ?? ''
-      console.log('Src', src)
 
       if (src) {
         try {
