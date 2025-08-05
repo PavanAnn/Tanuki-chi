@@ -7,8 +7,6 @@ export function startExpressServer() {
   const app = express()
   const port = 3000
 
-  console.log('--- Express server is starting ---')
-
   // Use the WeebCentral routes with a base path
   app.use('/api/weebcentral', weebCentralRoutes)
   app.use('/api/mangafox', mangaFoxRouter)

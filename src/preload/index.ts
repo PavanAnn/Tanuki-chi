@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
@@ -29,7 +30,18 @@ const api = {
   updateLatestChapter: (title: string, link: string, provider: string, latestChapter: string) =>
     ipcRenderer.invoke('update-latest-chapter', title, link, provider, latestChapter),
 
-  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks')
+  clearBookmarks: () => ipcRenderer.invoke('clear-bookmarks'),
+  // IPC
+  getExtensionResult: (
+    provider: string,
+    action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest' | 'proxy',
+    payload: any
+  ) => ipcRenderer.invoke('extension:invoke', provider, action, payload),
+  proxyImage: (url: string) => ipcRenderer.invoke('image:proxy', url),
+  getUpdateNotifications: () => ipcRenderer.invoke('get-update-notifications'),
+  addUpdateNotification: n => ipcRenderer.invoke('add-update-notification', n),
+  clearUpdateNotifications: () => ipcRenderer.invoke('clear-update-notifications'),
+  getExtensions: () => ipcRenderer.invoke('get-extensions-metadata')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

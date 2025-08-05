@@ -36,7 +36,12 @@ export const SharePage: React.FC = () => {
         const imported = JSON.parse(e.target?.result as string)
         if (!Array.isArray(imported)) throw new Error('Invalid format')
 
-        for (const item of imported) {
+        // Create a Set of links for fast lookup
+        const existingLinks = new Set(bookmarks.map((b) => b.link))
+
+        const newBookmarks = imported.filter((item) => !existingLinks.has(item.link))
+
+        for (const item of newBookmarks) {
           await window.api.toggleBookmark(
             item.title,
             item.link,
@@ -47,8 +52,13 @@ export const SharePage: React.FC = () => {
           )
         }
 
-        setBookmarks(mapBookmarks(imported))
-        message.success('Bookmarks imported successfully')
+        if (newBookmarks.length > 0) {
+          const updated = [...bookmarks, ...newBookmarks]
+          setBookmarks(mapBookmarks(updated))
+          message.success(`${newBookmarks.length} bookmarks imported successfully`)
+        } else {
+          message.info('No new bookmarks to import')
+        }
       } catch (err) {
         message.error('Invalid JSON file')
       }
@@ -59,7 +69,7 @@ export const SharePage: React.FC = () => {
 
   return (
     <>
-      <h2>IMPORT / EXPORT</h2>
+      <h2 onClick={() => console.log(bookmarks)}>IMPORT / EXPORT</h2>
       <div style={{ display: 'flex', gap: '16px' }}>
         <Button icon={<DownloadOutlined />} onClick={exportBookmarks}>
           Export Bookmarks
@@ -76,24 +86,24 @@ export const SharePage: React.FC = () => {
           <Button icon={<UploadOutlined />}>Import Bookmarks</Button>
         </Upload>
         <Button
-  danger
-  onClick={() => {
-    Modal.confirm({
-      title: 'Are you sure?',
-      content: 'This will delete all your bookmarks. Consider exporting them before.',
-      okText: 'Yes, delete all',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        await window.api.clearBookmarks()
-        setBookmarks([])
-        message.success('All bookmarks cleared.')
-      },
-    })
-  }}
->
-  Clear bookmarks
-</Button>
+          danger
+          onClick={() => {
+            Modal.confirm({
+              title: 'Are you sure?',
+              content: 'This will delete all your bookmarks. Consider exporting them before.',
+              okText: 'Yes, delete all',
+              okType: 'danger',
+              cancelText: 'Cancel',
+              onOk: async () => {
+                await window.api.clearBookmarks()
+                setBookmarks([])
+                message.success('All bookmarks cleared.')
+              }
+            })
+          }}
+        >
+          Clear bookmarks
+        </Button>
       </div>
     </>
   )

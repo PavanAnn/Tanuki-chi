@@ -9,7 +9,23 @@ import {
   updateLatestChapterForBookmark,
   updateLatestRead
 } from './bookmarkStore'
-import { startExpressServer } from '../../Server/server' // Adjust path as needed
+import * as MangaDex from '../extensions/MangaDex'
+import * as WeebCentral from '../extensions/WeebCentral'
+import * as MangaBat from '../extensions/MangaBat'
+import './imageProxy'
+import {
+  addUpdateNotification,
+  clearUpdateNotifications,
+  getUpdateNotifications
+} from './notificationStore'
+import { ExtensionMetadata } from '../extensions/types'
+
+const extensions = {
+  mangadex: MangaDex,
+  weebcentral: WeebCentral,
+  mangabat: MangaBat
+  // mangafox: MangaFox,
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -33,7 +49,7 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  mainWindow.webContents.setWindowOpenHandler(details => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
@@ -46,6 +62,52 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+// Metadata handler -> {mangadex: {metadata}, ...}
+// so i can call it as getMetadata(provider)
+ipcMain.handle('get-extensions-metadata', async () => {
+  return Object.values(extensions).reduce(
+    (acc, ext) => {
+      const id = ext.METADATA.id
+      acc[id] = ext.METADATA
+      return acc
+    },
+    {} as Record<string, ExtensionMetadata>
+  )
+})
+
+// ipc extensions handler
+ipcMain.handle(
+  'extension:invoke',
+  async (
+    _event,
+    provider: string,
+    action: 'search' | 'detail' | 'chapters' | 'pages' | 'latest' | 'proxy',
+    payload: any
+  ) => {
+    const ext = extensions[provider]
+    if (!ext) throw new Error(`Extension not found for provider: ${provider}`)
+
+    const fn = ext[action]
+    if (typeof fn !== 'function')
+      throw new Error(`Action '${action}' not available on provider '${provider}'`)
+
+    return await fn(payload)
+  }
+)
+
+// ipc notifications handler
+ipcMain.handle('get-update-notifications', () => {
+  return getUpdateNotifications()
+})
+
+ipcMain.handle('add-update-notification', (_, notif) => {
+  return addUpdateNotification(notif)
+})
+
+ipcMain.handle('clear-update-notifications', () => {
+  clearUpdateNotifications()
+})
 
 // Custom bookmark pavan ---------------------------
 ipcMain.handle('get-bookmarks', () => {
@@ -93,7 +155,6 @@ ipcMain.handle('clear-bookmarks', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  startExpressServer()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

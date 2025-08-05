@@ -1,19 +1,21 @@
-import { getSearchMangasMangaFox } from '../Fetchers/MangaFox/Requests/MangaFoxAPI'
-import { getSearchMangasWeebCentral } from '../Fetchers/WeebCentral/Requests/WeebCentralAPI'
+export async function getAllProviderSearchResults(searchTerm: string, providers: string[]) {
+  const searchPromises = providers.map((provider) =>
+    window.api.getExtensionResult(provider, 'search', searchTerm)
+  );
 
-export async function getAllProviderSearchResults(searchTerm: string) {
-  const [weebcentral, mangafox] = await Promise.allSettled([
-    getSearchMangasWeebCentral(searchTerm),
-    getSearchMangasMangaFox(searchTerm)
-  ])
+  const results = await Promise.allSettled(searchPromises);
 
   const wrapResult = (provider: string, result: any) => ({
-    [provider]: result?.value?.response?.data || []
-  })
+    [provider]: result?.value || []
+  });
 
-  const results: Array<Record<string, any>> = []
-  if (weebcentral.status === 'fulfilled') results.push(wrapResult('weebcentral', weebcentral))
-  if (mangafox.status === 'fulfilled') results.push(wrapResult('mangafox', mangafox))
+  const searchResults: Array<Record<string, any>> = [];
 
-  return results
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      searchResults.push(wrapResult(providers[index], result));
+    }
+  });
+
+  return searchResults;
 }

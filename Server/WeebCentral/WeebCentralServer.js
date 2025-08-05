@@ -11,7 +11,6 @@ const router = express.Router() // Use Router to define routes
 router.get('/mangas', async (req, res) => {
   let allMangas = []
   const { page = 1 } = req.query
-  console.log('page', page)
 
   try {
     const response = await axios.get(
@@ -26,7 +25,6 @@ router.get('/mangas', async (req, res) => {
       const link = $(element).find('h3 a').attr('href')
       if (title && link) {
         mangas.push({ title, link })
-        console.log(page, title)
       }
     })
 

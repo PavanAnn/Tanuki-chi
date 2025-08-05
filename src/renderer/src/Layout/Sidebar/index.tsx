@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
       <Divider style={{ margin: '-10% 0px 0px 0px' }} />
       <Flex vertical gap={'12px'} style={{ marginTop: '20px' }}>
         <SidebarSection to="/" className={isActive('/') ? 'active' : ''}>
-         Search
+          Search
         </SidebarSection>
         <SidebarSection to="/bookmarks" className={isActive('/bookmarks') ? 'active' : ''}>
           Bookmarks
@@ -27,6 +27,19 @@ const Sidebar: React.FC = () => {
         <SidebarSection to="/share" className={isActive('/share') ? 'active' : ''}>
           Import/Export
         </SidebarSection>
+        <SidebarSection to="/status" className={isActive('/status') ? 'active' : ''}>
+          Status
+        </SidebarSection>
+        {false && (
+          <>
+            <SidebarSection to="/update" className={isActive('/update') ? 'active' : ''}>
+              Update App
+            </SidebarSection>
+            <SidebarSection to="/about" className={isActive('/about') ? 'active' : ''}>
+              About
+            </SidebarSection>
+          </>
+        )}
       </Flex>
     </SidebarContainer>
   )

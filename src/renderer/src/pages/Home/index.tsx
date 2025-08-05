@@ -1,19 +1,33 @@
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HomeContainer, MangaGrid } from './styles'
 import { useSearchStore } from '../../Features/Store/Search/useSearchStore'
 import { Card, Flex, Image, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
+import { SearchType } from '@renderer/types'
+import { fetchProxiedImages, requiresProxy } from './proxyUtils'
+
+type ImageMap = Record<string, string>
 
 const Home: React.FC = () => {
   const navigate = useNavigate()
   const { data, isFetching } = useSearchStore()
+  const [proxiedImages, setProxiedImages] = useState<ImageMap>({})
 
-  const handleClick = (provider: string, link: string, title: string) => {
-    const encodedLink = encodeURIComponent(link)
-    const encodedTitle = encodeURIComponent(title)
-    const encodedProvider = encodeURIComponent(provider)
+  useEffect(() => {
+    if (!Array.isArray(data)) return
 
-    navigate(`/detail?provider=${encodedProvider}&link=${encodedLink}&title=${encodedTitle}`)
+    fetchProxiedImages(data, proxiedImages).then(newEntries => {
+      if (Object.keys(newEntries).length > 0) {
+        setProxiedImages(prev => ({ ...prev, ...newEntries }))
+      }
+    })
+  }, [data])
+
+  const handleClick = (provider: string, mangaId: string, title: string) => {
+    navigate('/detail', {
+      state: { provider, id: mangaId, title }
+    })
   }
 
   if (isFetching) {
@@ -33,7 +47,7 @@ const Home: React.FC = () => {
     <HomeContainer>
       <MangaGrid>
         {Array.isArray(data) && data.length > 0 ? (
-          data.every((providerEntry) => {
+          data.every(providerEntry => {
             const providerName = Object.keys(providerEntry)[0]
             const mangas = providerEntry[providerName]
             return mangas.length === 0
@@ -45,7 +59,7 @@ const Home: React.FC = () => {
           ) : (
             <Flex vertical gap="large">
               <h1>Search results:</h1>
-              {data.map((providerEntry) => {
+              {data.map(providerEntry => {
                 const providerName = Object.keys(providerEntry)[0]
                 const mangas = providerEntry[providerName]
 
@@ -55,24 +69,28 @@ const Home: React.FC = () => {
                       <>
                         <h2 style={{ textTransform: 'capitalize' }}>{providerName}</h2>
                         <Flex gap="large" wrap style={{ marginBottom: 32 }}>
-                          {mangas.map((manga: any) => (
-                            <Card
-                              size="small"
-                              key={manga.id || manga.href}
-                              title={manga.title}
-                              onClick={() => handleClick(providerName, manga.href, manga.title)}
-                              style={{ width: '15%', cursor: 'pointer' }}
-                            >
-                              <Image
-                                preview={false}
-                                loading="lazy"
-                                src={`http://127.0.0.1:3000/api/${providerName}/mangas/image-proxy?url=${encodeURIComponent(
-                                  manga.cover
-                                )}`}
-                                fallback="/fallback.jpg"
-                              />
-                            </Card>
-                          ))}
+                          {mangas.map((manga: SearchType, index) => {
+                            const src = requiresProxy(providerName)
+                              ? (manga.coverUrl && proxiedImages[manga.coverUrl]) || '/fallback.jpg'
+                              : manga.coverUrl || '/fallback.jpg'
+
+                            return (
+                              <Card
+                                size="small"
+                                key={index}
+                                title={manga.title}
+                                onClick={() => handleClick(providerName, manga.id, manga.title)}
+                                style={{ width: '15%', cursor: 'pointer' }}
+                              >
+                                <Image
+                                  preview={false}
+                                  loading="lazy"
+                                  src={src}
+                                  fallback="/fallback.jpg"
+                                />
+                              </Card>
+                            )
+                          })}
                         </Flex>
                       </>
                     )}

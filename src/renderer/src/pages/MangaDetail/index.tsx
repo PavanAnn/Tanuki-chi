@@ -1,231 +1,235 @@
+// src/components/MangaDetail.tsx
+import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Image, Button, Tag, Tooltip, Spin, Descriptions, Flex, Radio } from 'antd'
 import {
   BookOutlined,
   LeftOutlined,
   RightOutlined,
   StarFilled,
   ZoomInOutlined,
-  ZoomOutOutlined
+  ZoomOutOutlined,
+  LoadingOutlined
 } from '@ant-design/icons'
-import { Button, Descriptions, Flex, Image, Radio, Tag, Tooltip } from 'antd'
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import {
-  BookmarkContainer,
-  ChaptersContainer,
-  ChaptersListWrapper,
-  DetailTitle
-} from './styles'
 import { ThemedDivider } from '@renderer/Layout/SharedComponents/styles'
 import { CustomDrawer } from './Drawer'
-import { detailProviderMap } from '@renderer/Features/Store/Detail/useMangaDetailProvider'
+import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailTitle } from './styles'
+import { useMangaDetail } from '../../Features/Hooks/useMangaDetail'
+import { useMangaPages } from '../../Features/Hooks/useMangaPages'
+import { fetchSingleProxiedImage, requiresProxy } from '@renderer/Features/Proxy/sinlgeProxy'
 
-interface Chapters {
-  text: string
-  href: string
-}
-
-interface DetailManga {
-  author: string
-  status: string
-  latestChapter: string
-  chapters: Chapters[]
-  coverHref: string
-  tags: string[]
-  releaseDate: string
-  description: string
-
-}
-
-interface Pages {
-  text: string
-  href: string
+interface Chapter {
+  id: string
+  attributes: {
+    chapter: string
+    title: string
+  }
 }
 
 export const MangaDetail = () => {
-  const [searchParams] = useSearchParams()
-  const [open, setOpen] = useState(false)
-  const [selectedLink, setSelectedLink] = useState<string | null>(null)
-  const [selectedChapter, setSelectedChapter] = useState<string | null>(null)
+  const { state } = useLocation() as { state: { provider: string; id: string; title: string } }
+  const { provider, id, title } = state || {}
+  const navigate = useNavigate()
+  // id is the link to the detail page
+  if (!provider || !id || !title) return <div>Invalid or missing provider, id, or title.</div>
+
+  const [isDrawerOpen, setDrawerOpen] = useState(false)
+  const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null)
   const [bookmarked, setBookmarked] = useState(false)
-  const [latest, setLatest] = useState<string | undefined>()
   const [pageSize, setPageSize] = useState(50)
+  const [latestRead, setLatestRead] = useState<string | undefined>(undefined)
 
-  const provider = searchParams.get('provider')
-  const link = searchParams.get('link')
-  const title = searchParams.get('title')
+  const { detail, chapters, isLoading, isError } = useMangaDetail(provider, id)
+  const selectedChapterId = selectedChapter?.id || ''
+  const pagesQuery = useMangaPages(provider, selectedChapterId)
+  const pages = pagesQuery.data ?? []
 
-  const providerFns = provider ? detailProviderMap[provider] : null
-  if (!providerFns) {
-    return <div onClick={() => console.log(window.location.href)}>Invalid or missing provider</div>
-  }
+  const [proxiedCoverUrl, setProxiedCoverUrl] = useState<string | null>(null)
 
-  const { useDetail, usePages, imageProxyPrefix } = providerFns
+  const providerNeedsProxy = requiresProxy(provider);
 
-  const { data, isFetching } = useDetail(link ?? '')
-  const { data: allPages } = usePages(selectedLink ?? '')
-
-  // Check if the manga is bookmarked
   useEffect(() => {
-    const checkBookmarkDetails = async () => {
-      if (!title || !link || !provider) return
+    ;(async () => {
       const bookmarks = await window.api.getBookmarks()
-      const currentBookmark = bookmarks.find((b) => b.title === title && b.link === link)
-      setBookmarked(Boolean(currentBookmark))
-      if (currentBookmark?.latestRead) {
-        setLatest(currentBookmark.latestRead)
+      const current = bookmarks.find((b: any) => b.title === title && b.link === id)
+      setBookmarked(Boolean(current))
+      if (current?.latestRead) {
+        setLatestRead(current.latestRead)
       }
-    }
-    checkBookmarkDetails()
-  }, [title, link])
+    })()
+  }, [title, id, provider])
 
-  if (isFetching) {
-    return <div>loading</div>
+  useEffect(() => {
+    if (!detail?.coverUrl) return
+    ;(async () => {
+      const proxiedUrl = await fetchSingleProxiedImage(provider, detail.coverUrl, {})
+      setProxiedCoverUrl(proxiedUrl)
+    })()
+  }, [detail?.coverUrl, provider])
+
+  if (isLoading) {
+    return (
+      <Flex align="center" gap="middle">
+        <Spin
+          tip={<div onClick={() => navigate('/')}>Fetching details</div>}
+          fullscreen
+          indicator={<LoadingOutlined spin />}
+          size="large"
+        />
+      </Flex>
+    )
   }
 
-  const showDrawer = (link: string, chapter: string) => {
+  if (isError) {
+    return <div>Error</div>
+  }
+
+  // Handlers.
+  const handleChapterSelect = (chapter: Chapter) => {
     setSelectedChapter(chapter)
-    setSelectedLink(link)
-    setOpen(true)
+    setDrawerOpen(true)
   }
 
-  const onClose = (chapter: string | null) => {
-    if (!chapter) return
-    if (latest !== chapter) handleLatestRead(chapter)
-    setOpen(false)
-    setSelectedLink(null)
+  const handleDrawerClose = () => {
+    if (selectedChapter && latestRead !== selectedChapter.attributes.chapter) {
+      handleLatestRead(selectedChapter)
+    }
+    setDrawerOpen(false)
   }
 
-  const res: DetailManga = data?.response.data
-  const pages: Pages[] = allPages?.response.data.pages ?? []
-
-  // Toggle bookmark
+  if (!detail) {
+    return <div>error</div>
+  }
   const handleBookmarkClick = async () => {
-    if (title && link && provider) {
-      const updatedBookmarks = await window.api.toggleBookmark(title, link, res.coverHref, provider)
-      const isBookmarked = updatedBookmarks.some((b) => b.title === title && b.link === link)
-      setBookmarked(isBookmarked)
-    }
+    const updated = await window.api.toggleBookmark(
+      title,
+      id,
+      detail.coverUrl,
+      provider,
+      '',
+      detail.lastChapter?.trim() !== ''
+        ? detail.lastChapter
+        : (chapters?.[0]?.attributes?.chapter ?? '')
+    )
+    setBookmarked(updated.some((b: any) => b.title === title && b.link === id))
   }
 
-  // Update latest read chapter
-  const handleLatestRead = async (chapter: string) => {
-    if (!title || !link) return
-    const newLatest = latest === chapter ? undefined : chapter
-    await window.api.updateLatestRead(title, link, newLatest ?? null)
-    setLatest(newLatest)
+  const handleLatestRead = async (chapter: Chapter) => {
+    const newLatest =
+      latestRead === chapter.attributes.chapter ? undefined : chapter.attributes.chapter
+    await window.api.updateLatestRead(title, id, newLatest ?? null)
+    setLatestRead(newLatest)
   }
 
-  const handleNextChapter = (link: string, chapter: string) => {
-    setSelectedChapter(chapter)
-    setSelectedLink(link)
-  }
-
-  const chapterIndex = res.chapters.findIndex((ch) => ch.text === selectedChapter)
-
-  const changeChapter = (offset: number, chapter: string | null) => {
-    if (chapter) handleLatestRead(chapter)
-
-    const target = res.chapters[chapterIndex + offset]
-    if (target) {
-      handleNextChapter(target.href, target.text)
-    }
+  const chapterIndex = chapters ? chapters.findIndex(ch => ch.id === selectedChapter?.id) : -1
+  const changeChapter = (offset: number) => {
+    if (!chapters || chapterIndex < 0) return
+    const target = chapters[chapterIndex + offset]
+    if (target) setSelectedChapter(target)
   }
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}>
-        <Image
-          width={200}
-          src={`http://127.0.0.1:3000/api/${imageProxyPrefix}/mangas/image-proxy?url=${encodeURIComponent(res.coverHref)}`}
-          preview={true}
-        />
+      {/* Cover and manga info */}
+      <div
+        style={{ display: 'flex', gap: '28px', flexDirection: 'row' }}
+        onClick={() => console.log(pagesQuery)}
+      >
+        <Image width={300} src={proxiedCoverUrl || detail.coverUrl} preview={true} />
         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '60%' }}>
           <DetailTitle>
-            {title}
+            {detail.title}
             <BookmarkContainer>
               {bookmarked ? (
-                <Tooltip title='Remove from bookmarks'>
-                  <Button type="primary" shape="circle" icon={<StarFilled
-                    onClick={handleBookmarkClick}
-                    style={{ fontSize: '22px', color: '#FFFF00' }}
-                  />} />
+                <Tooltip title="Remove from bookmarks">
+                  <Button
+                    type="primary"
+                    shape="circle"
+                    icon={
+                      <StarFilled
+                        onClick={handleBookmarkClick}
+                        style={{ fontSize: '22px', color: '#FFFF00' }}
+                      />
+                    }
+                  />
                 </Tooltip>
-                
               ) : (
-                <Tooltip title='Save into bookmarks'>
-                <Button variant='solid' type="primary" shape="circle" icon={<StarFilled
-                  onClick={handleBookmarkClick}
-                  style={{ fontSize: '22px', color: '#FFFFFF' }}
-                />} />
+                <Tooltip title="Save into bookmarks">
+                  <Button
+                    type="primary"
+                    shape="circle"
+                    icon={
+                      <StarFilled
+                        onClick={handleBookmarkClick}
+                        style={{ fontSize: '22px', color: '#FFFFFF' }}
+                      />
+                    }
+                  />
                 </Tooltip>
               )}
             </BookmarkContainer>
           </DetailTitle>
           <ThemedDivider />
-          <Descriptions
-            title="Manga Info"
-            column={1}
-            size="small"
-            style={{ maxWidth: '80%' }}
-          >
-            <Descriptions.Item label="Author">{res.author}</Descriptions.Item>
-            <Descriptions.Item label="Status">{res.status}</Descriptions.Item>
-            <Descriptions.Item label="Latest Chapter">{res.latestChapter}</Descriptions.Item>
-            <Descriptions.Item label="Release Date">{res.releaseDate}</Descriptions.Item>
+          <Descriptions title="Manga Info" column={1} size="small" style={{ maxWidth: '80%' }}>
+            <Descriptions.Item label="Author">{detail.author}</Descriptions.Item>
+            <Descriptions.Item label="Status">{detail.status}</Descriptions.Item>
+            <Descriptions.Item label="Latest Chapter">{detail.lastChapter}</Descriptions.Item>
+            <Descriptions.Item label="Release Date">{detail.releaseDate}</Descriptions.Item>
             <Descriptions.Item label="Tags">
-              {res.tags.map((tag: string) => (
+              {detail.tags.map((tag: string) => (
                 <Tag key={tag}>{tag}</Tag>
               ))}
             </Descriptions.Item>
-            <Descriptions.Item label="Description">
-              {res.description}
-            </Descriptions.Item>
+            <Descriptions.Item label="Description">{detail.description}</Descriptions.Item>
           </Descriptions>
+          <Flex style={{ marginTop: '20px' }}>Extension: {provider}</Flex>
         </div>
       </div>
       <ThemedDivider />
+      {/* Chapters List */}
       <ChaptersListWrapper>
-        {res.chapters.map((element, index) => (
-          <ChaptersContainer isLatest={element.text === latest} key={index}>
-            <div
-              key={element.href}
-              onClick={() => showDrawer(element.href, element.text)}
-              style={{ cursor: 'pointer' }}
-            >
-              {element.text}
-            </div>
-            <BookOutlined
-              onClick={() => {
-                handleLatestRead(element.text)
-              }}
-              style={{ cursor: 'pointer', color: element.text === latest ? '#FFFF00' : '#433D8B' }}
-            />
-          </ChaptersContainer>
-        ))}
+        {chapters?.map(ch => {
+          const chapterDisplay = `${ch.attributes.chapter}${ch.attributes.title ? ' - ' + ch.attributes.title : ''}`
+          return (
+            <ChaptersContainer key={ch.id} isLatest={latestRead === ch.attributes.chapter}>
+              <div onClick={() => handleChapterSelect(ch)} style={{ cursor: 'pointer' }}>
+                {chapterDisplay}
+              </div>
+              <BookOutlined
+                onClick={() => handleLatestRead(ch)}
+                style={{
+                  cursor: 'pointer',
+                  color: latestRead === ch.attributes.chapter ? '#FFFF00' : '#433D8B'
+                }}
+              />
+            </ChaptersContainer>
+          )
+        })}
       </ChaptersListWrapper>
-
+      {/* Drawer for Pages */}
       <CustomDrawer
-        open={open}
-        onClose={() => {
-          onClose(selectedChapter)
-        }}
-        chapter={selectedChapter}
-        title={`${title}  -  ${selectedChapter}`}
+        open={isDrawerOpen}
+        onClose={handleDrawerClose}
+        chapter={
+          selectedChapter
+            ? `${selectedChapter.attributes.chapter}${selectedChapter.attributes.title ? ' - ' + selectedChapter.attributes.title : ''}`
+            : ''
+        }
+        title={`${detail.title} - ${selectedChapter ? `${selectedChapter.attributes.chapter}${selectedChapter.attributes.title ? ' - ' + selectedChapter.attributes.title : ''}` : ''}`}
         width="90%"
         extra={
           <Flex gap="16px">
             <Button
-              disabled={chapterIndex === res.chapters.length - 1}
-              onClick={() => changeChapter(1, selectedChapter)}
+              disabled={chapterIndex === -1 || chapterIndex === (chapters?.length || 0) - 1}
+              onClick={() => changeChapter(1)}
               shape="default"
               icon={<LeftOutlined />}
             >
               Previous chapter
             </Button>
-
             <Button
-              disabled={chapterIndex === 0}
-              onClick={() => changeChapter(-1, selectedChapter)}
+              disabled={chapterIndex <= 0}
+              onClick={() => changeChapter(-1)}
               shape="default"
               icon={<RightOutlined />}
             >
@@ -253,22 +257,38 @@ export const MangaDetail = () => {
           vertical
           align="center"
         >
-          {pages.map((element) => (
-            <Flex
-              key={element.href}
-              style={{ width: `${pageSize}%`, marginBottom: 16 }}
-              justify="center"
-              align="center"
-            >
-              <Image
-                width="100%"
-                src={`http://127.0.0.1:3000/api/${imageProxyPrefix}/mangas/image-proxy?url=${encodeURIComponent(element.href)}`}
-                preview={false}
+          {pagesQuery.isFetching ? (
+            <Flex align="center" gap="middle">
+              <Spin
+                tip={<div>Fetching pages...</div>}
+                fullscreen
+                indicator={<LoadingOutlined spin />}
+                size="large"
               />
             </Flex>
-          ))}
+          ) : pages.length > 0 ? (
+            pages.map((page, index) => (
+              <Flex
+                key={index}
+                style={{ width: `${pageSize}%`, marginBottom: 16 }}
+                justify="center"
+                align="center"
+              >
+                <Image
+                  width="100%"
+                  src={providerNeedsProxy ? `data:image/jpeg;base64,${page.data}` : page.href}
+                  alt={page.text}
+                  preview={false}
+                />
+              </Flex>
+            ))
+          ) : (
+            <div>No pages available</div>
+          )}
         </Flex>
       </CustomDrawer>
     </div>
   )
 }
+
+export default MangaDetail

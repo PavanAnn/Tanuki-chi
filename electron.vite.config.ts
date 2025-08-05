@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   main: {
+    // necessary exclude to uild the electron-store
     plugins: [externalizeDepsPlugin({ exclude: ['electron-store'] })]
   },
   preload: {
