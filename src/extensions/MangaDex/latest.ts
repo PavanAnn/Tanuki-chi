@@ -4,6 +4,7 @@ const baseUrl = 'https://api.mangadex.org';
 
 export async function getLatestMangaDex(mangaId: string) {
   try {
+    console.log('Fetching latest chapter from MangaDex...')
     const response = await axios.get(`${baseUrl}/manga/${mangaId}/feed`, {
       params: {
         translatedLanguage: ['en'],

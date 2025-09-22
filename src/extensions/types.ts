@@ -19,6 +19,15 @@ export interface DetailType {
   coverUrl?: string
 }
 
+export interface ChapterType {
+  id: string
+  attributes: {
+    chapter: string
+    title?: string
+    releaseDate: string
+  }
+}
+
 export type ExtensionMetadata = {
   id: string
   version: string

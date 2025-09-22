@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio'
 
 export async function getLatestMangabat(chapterUrl: string) {
   try {
+    console.log('Fetching latest chapter from MangaBat...')
+
     const response = await axios.get(chapterUrl, {
       headers: {
         'User-Agent':
