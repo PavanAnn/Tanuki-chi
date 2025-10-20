@@ -4,7 +4,7 @@ import { useSearchStore } from '../../Features/Store/Search/useSearchStore'
 import { useNavigate } from 'react-router-dom'
 import { getAllProviderSearchResults } from '@renderer/Features/Store/useSearchAllProviders'
 import Search from 'antd/es/input/Search'
-import { Badge, Button, Divider, Flex, List, Popover, Select } from 'antd'
+import { Badge, Button, Divider, Flex, List, Popover } from 'antd'
 import { UpdateNotification } from '@renderer/types'
 import { BellOutlined } from '@ant-design/icons'
 
@@ -65,7 +65,7 @@ const Header: React.FC = () => {
         placeholder="Select providers"
         defaultValue={allProviders}
         size="middle"
-        onChange={val => setSelectedProviders(val)}
+        onChange={(val: any) => setSelectedProviders(val)}
         options={allProviders.map(p => ({ label: p, value: p }))}
         maxTagCount={2}
         maxTagTextLength={10}

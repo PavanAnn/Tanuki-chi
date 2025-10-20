@@ -16,9 +16,24 @@ export async function searchWeebCentral(searchTerm: string): Promise<SearchType[
 
   try {
     while (true) {
-      const response = await axios.get(
-        `https://weebcentral.com/search/data?text=${encodeURIComponent(searchTerm)}&sort=Best%20Match&order=Ascending&display_mode=Full%20Display&offset=${offset}&limit=32`
-      );
+    const response = await axios.get(
+      `https://weebcentral.com/search/data?text=${encodeURIComponent(searchTerm)}&sort=Best%20Match&order=Ascending&display_mode=Full%20Display&offset=${offset}&limit=32`,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+          'Accept': '*/*',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Referer': 'https://weebcentral.com/search?sort=Best+Match&order=Ascending&display_mode=Full+Display',
+          'HX-Request': 'true',
+          'HX-Target': 'search-results',
+          'HX-Trigger': 'advanced-search-form',
+          'HX-Current-URL': 'https://weebcentral.com/search?sort=Best+Match&order=Ascending&display_mode=Full+Display',
+        },
+        withCredentials: true,
+      }
+    );
+
+      console.log('RESPONSE', response)
       const html = response.data;
       const $ = cheerio.load(html);
 
@@ -55,6 +70,7 @@ export async function searchWeebCentral(searchTerm: string): Promise<SearchType[
     return allMangas;
   } catch (error: any) {
     console.error('Error fetching data from WeebCentral:', error.message);
+    console.log(error)
     throw new Error('Failed to fetch search results');
   }
 }

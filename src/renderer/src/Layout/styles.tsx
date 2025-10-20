@@ -9,7 +9,7 @@ export const LayoutContainer = styled.div`
 export const MainContent = styled.main`
   flex-grow: 1;
   padding: 20px;
-  background-color: ${({ theme }) => theme.colors.bg};
+  background-color: ${({ theme }: { theme: any }) => theme.colors.bg};
   overflow-y: auto;
   margin-top: 6vh;
   min-width: calc(100% - 200px);

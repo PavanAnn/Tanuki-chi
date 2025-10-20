@@ -87,7 +87,7 @@ export const StatusPage: React.FC = () => {
             )}
           </div>
         ),
-        rowExpandable: record => true
+        rowExpandable: _record => true
       }}
       dataSource={data}
     />

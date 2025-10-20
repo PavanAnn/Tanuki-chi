@@ -13,7 +13,7 @@ export const HeaderContainer = styled(Flex)`
   flex-direction: row;
   border: 1px solid ${({ theme }) => theme.colors.bg};
 `
-export const InlineSelect = styled(Select)`
+export const InlineSelect = styled(Select as any)`
   .ant-select-selector {
     max-height: 5vh;
     overflow: hidden;
