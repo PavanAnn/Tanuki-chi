@@ -1,4 +1,4 @@
-import { Flex } from 'antd'
+import { Flex, Select } from 'antd'
 import styled from 'styled-components'
 
 export const HeaderContainer = styled(Flex)`
@@ -12,4 +12,13 @@ export const HeaderContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
   border: 1px solid ${({ theme }) => theme.colors.bg};
+`
+export const InlineSelect = styled(Select)`
+  .ant-select-selector {
+    max-height: 5vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
 `

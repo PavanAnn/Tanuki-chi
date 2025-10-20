@@ -17,6 +17,7 @@ import { BookmarkContainer, ChaptersContainer, ChaptersListWrapper, DetailTitle 
 import { useMangaDetail } from '../../Features/Hooks/useMangaDetail'
 import { useMangaPages } from '../../Features/Hooks/useMangaPages'
 import { fetchSingleProxiedImage, requiresProxy } from '@renderer/Features/Proxy/sinlgeProxy'
+import moment from 'moment'
 
 interface Chapter {
   id: string
@@ -188,12 +189,14 @@ export const MangaDetail = () => {
       <ThemedDivider />
       {/* Chapters List */}
       <ChaptersListWrapper>
+        <h1 onClick={() => console.log(chapters)}>Chapters</h1>
         {chapters?.map(ch => {
           const chapterDisplay = `${ch.attributes.chapter}${ch.attributes.title ? ' - ' + ch.attributes.title : ''}`
           return (
             <ChaptersContainer key={ch.id} isLatest={latestRead === ch.attributes.chapter}>
               <div onClick={() => handleChapterSelect(ch)} style={{ cursor: 'pointer' }}>
-                {chapterDisplay}
+                {chapterDisplay} -{' '}
+                {moment(ch.attributes.releaseDate).locale('en').format('DD MMM YYYY')}
               </div>
               <BookOutlined
                 onClick={() => handleLatestRead(ch)}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HeaderContainer } from './styles'
+import { HeaderContainer, InlineSelect } from './styles'
 import { useSearchStore } from '../../Features/Store/Search/useSearchStore'
 import { useNavigate } from 'react-router-dom'
 import { getAllProviderSearchResults } from '@renderer/Features/Store/useSearchAllProviders'
@@ -59,13 +59,17 @@ const Header: React.FC = () => {
         loading={isFetching}
         allowClear
       />
-      <Select
+      <InlineSelect
+        style={{ width: '30%' }}
         mode="multiple"
         placeholder="Select providers"
         defaultValue={allProviders}
-        size="large"
+        size="middle"
         onChange={val => setSelectedProviders(val)}
         options={allProviders.map(p => ({ label: p, value: p }))}
+        maxTagCount={2}
+        maxTagTextLength={10}
+        maxTagPlaceholder={omittedValues => `+ ${omittedValues.length} more`}
       />
       <Flex style={{ marginLeft: 'auto', marginRight: '2%' }}>
         <Popover
