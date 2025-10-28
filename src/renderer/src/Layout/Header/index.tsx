@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { HeaderContainer, InlineSelect } from './styles'
 import { useSearchStore } from '../../Features/Store/Search/useSearchStore'
 import { useNavigate } from 'react-router-dom'
-import { getAllProviderSearchResults } from '@renderer/Features/Store/useSearchAllProviders'
+import { searchProvidersProgressively } from '@renderer/Features/Store/useSearchAllProviders'
 import Search from 'antd/es/input/Search'
 import { Badge, Button, Divider, Flex, List, Popover } from 'antd'
 import { UpdateNotification } from '@renderer/types'
@@ -11,7 +11,16 @@ import { BellOutlined } from '@ant-design/icons'
 const allProviders = ['mangadex', 'weebcentral', 'mangabat']
 
 const Header: React.FC = () => {
-  const { setSearchTerm, setData, setIsFetching, clear, isFetching } = useSearchStore()
+  const { 
+    setSearchTerm, 
+    setData, 
+    clear, 
+    loadingProviders,
+    setLoadingProviders,
+    setProviderOrder,
+    updateProviderData,
+    removeLoadingProvider 
+  } = useSearchStore()
   const [selectedProviders, setSelectedProviders] = useState<string[]>(allProviders)
   const [notifications, setNotifications] = useState<UpdateNotification[]>([])
   const [popoverVisible, setPopoverVisible] = useState(false)
@@ -24,10 +33,30 @@ const Header: React.FC = () => {
     if (!trimmed || selectedProviders.length === 0) return
 
     navigate('/')
-    setIsFetching(true)
-    const results = await getAllProviderSearchResults(trimmed, selectedProviders)
-    setData(results)
-    setIsFetching(false)
+    
+    // Clear previous data and set loading providers
+    setData(null)
+    setLoadingProviders(new Set(selectedProviders))
+    setProviderOrder(selectedProviders) // Set the order of providers
+
+    // Start progressive search
+    searchProvidersProgressively(
+      trimmed,
+      selectedProviders,
+      // onProviderComplete
+      (provider, results) => {
+        updateProviderData(provider, results)
+        removeLoadingProvider(provider)
+      },
+      // onProviderStart
+      () => {
+        // Already set in loadingProviders
+      },
+      // onProviderError
+      (provider, error) => {
+        console.error(`Provider ${provider} search failed:`, error)
+      }
+    )
   }
 
   const fetchNotifications = async () => {
@@ -56,7 +85,7 @@ const Header: React.FC = () => {
         placeholder="Search for mangas"
         enterButton="Search"
         size="large"
-        loading={isFetching}
+        loading={loadingProviders.size > 0}
         allowClear
       />
       <InlineSelect
