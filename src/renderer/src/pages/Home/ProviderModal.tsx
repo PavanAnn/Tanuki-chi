@@ -40,7 +40,7 @@ export const ProviderModal: React.FC<ProviderModalProps> = ({
               transition: 'background-color 0.2s'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f5f5'
+              e.currentTarget.style.backgroundColor = 'var(--empty-state-bg)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent'
@@ -67,8 +67,8 @@ export const ProviderModal: React.FC<ProviderModalProps> = ({
 
       {loadingProviders.size > 0 && (
         <>
-          <div style={{ borderTop: '1px solid #f0f0f0', marginTop: '16px', paddingTop: '16px' }}>
-            <h4 style={{ marginBottom: '12px', color: '#888' }}>Loading from other providers...</h4>
+          <div style={{ borderTop: '1px solid var(--empty-state-bg)', marginTop: '16px', paddingTop: '16px' }}>
+            <h4 style={{ marginBottom: '12px', color: 'var(--empty-state-text)' }}>Loading from other providers...</h4>
             {Array.from(loadingProviders).map((provider) => (
               <Flex
                 key={provider}
@@ -77,7 +77,7 @@ export const ProviderModal: React.FC<ProviderModalProps> = ({
                 style={{ padding: '8px', marginBottom: '8px' }}
               >
                 <Spin indicator={<LoadingOutlined spin />} size="small" />
-                <span style={{ textTransform: 'capitalize', color: '#888' }}>{provider}</span>
+                <span style={{ textTransform: 'capitalize', color: 'var(--empty-state-text)' }}>{provider}</span>
               </Flex>
             ))}
           </div>

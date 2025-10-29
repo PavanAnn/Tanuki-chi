@@ -53,7 +53,7 @@ const GroupedMangaCard: React.FC<{
         <Flex
           align="center"
           justify="center"
-          style={{ height: '100%', backgroundColor: '#f0f0f0', borderRadius: '8px' }}
+          style={{ height: '100%', backgroundColor: 'var(--empty-state-bg)', borderRadius: '8px' }}
         >
           <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
         </Flex>
@@ -175,7 +175,7 @@ export const GroupedSearchView: React.FC<GroupedSearchViewProps> = ({
               bottom: '25px',
               left: '50%',
               transform: 'translateX(-50%)',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backgroundColor: 'var(--loading-indicator-bg)',
               padding: '12px 24px',
               borderRadius: '24px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
@@ -184,7 +184,7 @@ export const GroupedSearchView: React.FC<GroupedSearchViewProps> = ({
             }}
           >
             <Spin indicator={<LoadingOutlined spin />} size="small" />
-            <span style={{ color: '#888', fontWeight: '500' }}>
+            <span style={{ color: 'var(--loading-indicator-text)', fontWeight: '500' }}>
               Loading from {loadingProviders.size} provider{loadingProviders.size > 1 ? 's' : ''}...
             </span>
           </Flex>
@@ -216,13 +216,13 @@ export const GroupedSearchView: React.FC<GroupedSearchViewProps> = ({
             vertical
             style={{
               padding: '60px',
-              backgroundColor: '#f5f5f5',
+              backgroundColor: 'var(--empty-state-bg)',
               borderRadius: '8px',
               marginTop: '20px'
             }}
           >
             <h2 style={{ margin: 0, marginBottom: '8px' }}>No results found</h2>
-            <p style={{ color: '#888', margin: 0 }}>
+            <p style={{ color: 'var(--empty-state-text)', margin: 0 }}>
               Try a different manga title or select different providers.
             </p>
           </Flex>

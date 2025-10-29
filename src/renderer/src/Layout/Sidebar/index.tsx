@@ -1,46 +1,72 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { SidebarContainer, SidebarSection } from './styles'
-import { Divider, Flex, Image } from 'antd'
+import { SidebarContainer, SidebarSection, LogoContainer, AppName, NavContainer, ThemeToggle } from './styles'
+import { Image, Flex } from 'antd'
+import {
+  SearchOutlined,
+  StarOutlined,
+  SwapOutlined,
+  CheckCircleOutlined,
+  CloudDownloadOutlined,
+  InfoCircleOutlined,
+  BulbOutlined,
+  BulbFilled
+} from '@ant-design/icons'
 import logo from '../../assets/icon.png'
+import { useTheme } from '../../contexts/ThemeContext'
+
 const Sidebar: React.FC = () => {
   const location = useLocation()
+  const { mode, toggleTheme } = useTheme()
 
   const isActive = (path: string) => location.pathname === path
 
+  const menuItems = [
+    { path: '/', label: 'Search', icon: <SearchOutlined /> },
+    { path: '/bookmarks', label: 'Bookmarks', icon: <StarOutlined /> },
+    { path: '/share', label: 'Import/Export', icon: <SwapOutlined /> },
+    { path: '/status', label: 'Status', icon: <CheckCircleOutlined /> }
+  ]
+
   return (
     <SidebarContainer vertical>
-      <Flex style={{ height: '6vh' }} align="center">
-        <Image preview={false} width="48px" src={logo} />
-        <Flex style={{ fontFamily: `"Hachi Maru Pop", cursive`, fontWeight: '800' }}>
-          Tanuki-chi
-        </Flex>
+      <LogoContainer align="center" gap="12px">
+        <Image preview={false} width="48px" height="48px" src={logo} />
+        <AppName>Tanuki-chi</AppName>
+      </LogoContainer>
+
+      <NavContainer vertical gap="8px">
+        {menuItems.map((item) => (
+          <SidebarSection
+            key={item.path}
+            to={item.path}
+            className={isActive(item.path) ? 'active' : ''}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </SidebarSection>
+        ))}
+      </NavContainer>
+
+      <Flex style={{ marginTop: 'auto', paddingTop: '24px' }}>
+        <ThemeToggle onClick={toggleTheme}>
+          {mode === 'light' ? <BulbOutlined /> : <BulbFilled />}
+          <span>{mode === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+        </ThemeToggle>
       </Flex>
-      <Divider style={{ margin: '-10% 0px 0px 0px' }} />
-      <Flex vertical gap={'12px'} style={{ marginTop: '20px' }}>
-        <SidebarSection to="/" className={isActive('/') ? 'active' : ''}>
-          Search
-        </SidebarSection>
-        <SidebarSection to="/bookmarks" className={isActive('/bookmarks') ? 'active' : ''}>
-          Bookmarks
-        </SidebarSection>
-        <SidebarSection to="/share" className={isActive('/share') ? 'active' : ''}>
-          Import/Export
-        </SidebarSection>
-        <SidebarSection to="/status" className={isActive('/status') ? 'active' : ''}>
-          Status
-        </SidebarSection>
-        {false && (
-          <>
-            <SidebarSection to="/update" className={isActive('/update') ? 'active' : ''}>
-              Update App
-            </SidebarSection>
-            <SidebarSection to="/about" className={isActive('/about') ? 'active' : ''}>
-              About
-            </SidebarSection>
-          </>
-        )}
-      </Flex>
+
+      {false && (
+        <>
+          <SidebarSection to="/update" className={isActive('/update') ? 'active' : ''}>
+            <CloudDownloadOutlined />
+            <span>Update App</span>
+          </SidebarSection>
+          <SidebarSection to="/about" className={isActive('/about') ? 'active' : ''}>
+            <InfoCircleOutlined />
+            <span>About</span>
+          </SidebarSection>
+        </>
+      )}
     </SidebarContainer>
   )
 }

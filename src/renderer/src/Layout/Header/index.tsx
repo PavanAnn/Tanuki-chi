@@ -77,30 +77,33 @@ const Header: React.FC = () => {
   }
 
   return (
-    <HeaderContainer gap={'12px'} align="center">
+    <HeaderContainer align="center">
       <Search
-        style={{ width: '60%', marginLeft: '20px' }}
+        style={{ flex: 1, maxWidth: '600px' }}
         onSearch={handleSearch}
         onClear={() => clear()}
-        placeholder="Search for mangas"
+        placeholder="Search for mangas across providers..."
         enterButton="Search"
         size="large"
         loading={loadingProviders.size > 0}
         allowClear
       />
       <InlineSelect
-        style={{ width: '30%' }}
+        style={{ width: '280px', marginLeft: '20px' }}
         mode="multiple"
         placeholder="Select providers"
         defaultValue={allProviders}
-        size="middle"
+        size="large"
         onChange={(val: any) => setSelectedProviders(val)}
-        options={allProviders.map(p => ({ label: p, value: p }))}
+        options={allProviders.map(p => ({ 
+          label: p.charAt(0).toUpperCase() + p.slice(1), 
+          value: p 
+        }))}
         maxTagCount={2}
         maxTagTextLength={10}
         maxTagPlaceholder={omittedValues => `+ ${omittedValues.length} more`}
       />
-      <Flex style={{ marginLeft: 'auto', marginRight: '2%' }}>
+      <Flex style={{ marginLeft: 'auto' }}>
         <Popover
           content={
             <div style={{ maxWidth: '300px', maxHeight: '60vh' }}>

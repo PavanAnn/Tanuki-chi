@@ -9,6 +9,8 @@ interface CustomDrawerProps {
   width?: string
   chapter: string | null
   children: ReactNode
+  showHeader?: boolean
+  floatingHeader?: boolean
 }
 
 const slideIn = keyframes`
@@ -42,25 +44,43 @@ const DrawerContainer = styled.div<{ open: boolean; width: string }>`
   right: 0;
   width: ${({ width }) => width};
   height: 100%;
-  background: #fff;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  background: ${({ theme }) => theme.colors.cardBg};
+  box-shadow: -2px 0 8px ${({ theme }) => theme.colors.shadowColor};
   z-index: 1001;
   animation: ${({ open }) => (open ? slideIn : slideOut)} 0.3s forwards;
 `
 
-const DrawerHeader = styled.div`
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
+const DrawerHeader = styled.div<{ show?: boolean; floating?: boolean }>`
+  padding: ${({ floating }) => floating ? '12px 24px' : '16px'};
+  border-bottom: ${({ floating, theme }) => floating ? 'none' : `1px solid ${theme.colors.border}`};
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: black;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  background: ${({ floating, theme }) => 
+    floating ? 'var(--loading-indicator-bg)' : theme.colors.cardBg
+  };
+  opacity: ${({ show }) => (show !== undefined ? (show ? 1 : 0) : 1)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${({ show }) => (show !== undefined ? (show ? 'auto' : 'none') : 'auto')};
+  
+  ${({ floating }) => floating && `
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1002;
+    width: 90%;
+  `}
 `
 
-const DrawerBody = styled.div`
-  padding: 16px;
+const DrawerBody = styled.div<{ fullHeight?: boolean }>`
+  padding: ${({ fullHeight }) => fullHeight ? '0' : '16px'};
   overflow-y: auto;
-  height: calc(100% - 60px);
+  height: ${({ fullHeight }) => fullHeight ? '100%' : 'calc(100% - 60px)'};
+  background: ${({ theme }) => theme.colors.cardBg};
 `
 
 const CloseButton = styled.button`
@@ -68,6 +88,12 @@ const CloseButton = styled.button`
   border: none;
   font-size: 22px;
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: ${({ theme }) => theme.colors.activeText};
+  }
 `
 
 export const CustomDrawer: React.FC<CustomDrawerProps> = ({
@@ -77,7 +103,9 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
   extra,
   children,
   width = '90%',
-  chapter
+  chapter,
+  showHeader = true,
+  floatingHeader = false
 }) => {
   const [isVisible, setIsVisible] = useState(false)
 
@@ -101,12 +129,21 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
         }}
       />
       <DrawerContainer open={open} width={width}>
-        <DrawerHeader>
-          <div style={{ color: 'black' }}>{title}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <DrawerHeader show={showHeader} floating={floatingHeader}>
+          <div style={{ 
+            fontSize: floatingHeader ? '14px' : '16px',
+            fontWeight: '500',
+            color: floatingHeader ? 'var(--loading-indicator-text)' : 'inherit',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: floatingHeader ? '400px' : 'auto'
+          }}>
+            {title}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
             {extra}
             <CloseButton
-              style={{ color: '#000957' }}
               onClick={() => {
                 onClose(chapter)
               }}
@@ -115,7 +152,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
             </CloseButton>
           </div>
         </DrawerHeader>
-        <DrawerBody>{children}</DrawerBody>
+        <DrawerBody fullHeight={floatingHeader}>{children}</DrawerBody>
       </DrawerContainer>
     </>
   )

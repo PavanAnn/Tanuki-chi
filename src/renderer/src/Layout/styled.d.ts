@@ -13,6 +13,12 @@ declare module 'styled-components' {
       hover: string;
       active: string;
       activeText: string;
+      cardBg: string;
+      textPrimary: string;
+      textSecondary: string;
+      border: string;
+      shadowColor: string;
+      gradient: string;
     };
   }
 }

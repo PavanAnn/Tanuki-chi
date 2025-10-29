@@ -124,7 +124,7 @@ const MangaCard: React.FC<{
           justify="center"
           style={{ 
             height: '100%', 
-            backgroundColor: '#f0f0f0',
+            backgroundColor: 'var(--empty-state-bg)',
             borderRadius: '8px'
           }}
         >
@@ -220,14 +220,14 @@ const ProviderSection: React.FC<{
             minWidth: '200px',
             maxWidth: '200px',
             height: '280px',
-            backgroundColor: '#f5f5f5', 
+            backgroundColor: 'var(--empty-state-bg)', 
             borderRadius: '8px',
             padding: '16px',
             textAlign: 'center',
             flexShrink: 0
           }}
         >
-          <span style={{ color: '#888', fontSize: '14px' }}>
+          <span style={{ color: 'var(--empty-state-text)', fontSize: '14px' }}>
             No mangas found
           </span>
         </Flex>
@@ -350,13 +350,13 @@ const Home: React.FC = () => {
                     vertical
                     style={{ 
                       padding: '60px', 
-                      backgroundColor: '#f5f5f5', 
+                      backgroundColor: 'var(--empty-state-bg)', 
                       borderRadius: '8px',
                       marginTop: '20px'
                     }}
                   >
                     <h2 style={{ margin: 0, marginBottom: '8px' }}>No results found</h2>
-                    <p style={{ color: '#888', margin: 0 }}>Try a different manga title or select different providers.</p>
+                    <p style={{ color: 'var(--empty-state-text)', margin: 0 }}>Try a different manga title or select different providers.</p>
                   </Flex>
                 )}
               </>
